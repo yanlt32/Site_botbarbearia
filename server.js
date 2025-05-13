@@ -1,12 +1,16 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
+const path = require('path');
+
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname))); // Serve o index.html e outros arquivos estáticos
 
-// Simulação de banco de dados
+// Simulação de banco de dados (em memória)
 let agendamentos = [];
 
 // Configuração do Nodemailer (Gmail)
@@ -14,16 +18,16 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'ladeiatortelli8@gmail.com', // Seu e-mail
-        pass: 'kzgnposgzlwuharl' // Senha de app sem espaços
+        pass: 'kzgnposgzlwuharl' // Senha de app do Gmail
     }
 });
 
-// Rota para testar o envio de e-mail manualmente
+// Rota para testar o envio de e-mail
 app.get('/api/test-email', async (req, res) => {
     try {
         await transporter.sendMail({
             from: '"Corte & Estilo" <ladeiatortelli8@gmail.com>',
-            to: 'ladeiatortelli8@gmail.com', // Substitua pelo e-mail do dono
+            to: 'ladeiatortelli8@gmail.com',
             subject: 'Teste de Envio de E-mail',
             text: 'Este é um e-mail de teste do sistema Corte & Estilo.'
         });
@@ -37,12 +41,11 @@ app.get('/api/test-email', async (req, res) => {
 
 // Rota para salvar agendamento e enviar e-mail
 app.post('/api/agendamentos', async (req, res) => {
-    console.log('Recebido agendamento:', req.body); // Debug: verificar dados recebidos
+    console.log('Recebido agendamento:', req.body);
     const agendamento = req.body;
     agendamento.id = agendamentos.length + 1;
     agendamentos.push(agendamento);
 
-    // Formatar o conteúdo do e-mail
     const emailContent = `
     Novo Agendamento - Corte & Estilo
     Nome: ${agendamento.nome}
@@ -55,10 +58,9 @@ app.post('/api/agendamentos', async (req, res) => {
     `.trim();
 
     try {
-        // Enviar e-mail
         await transporter.sendMail({
             from: '"Corte & Estilo" <ladeiatortelli8@gmail.com>',
-            to: 'ladeiatortelli8@gmail.com', // Substitua pelo e-mail do dono
+            to: 'ladeiatortelli8@gmail.com',
             subject: 'Novo Agendamento Recebido',
             text: emailContent
         });
@@ -73,10 +75,16 @@ app.post('/api/agendamentos', async (req, res) => {
 // Rota para obter agendamentos
 app.get('/api/agendamentos', (req, res) => {
     const { data } = req.query;
-    console.log('Buscando agendamentos para data:', data); // Debug
+    console.log('Buscando agendamentos para data:', data);
     const filtered = data ? agendamentos.filter(ag => ag.data === data) : agendamentos;
     res.json({ success: true, data: filtered });
 });
 
-// Iniciar o servidor
-app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
+// Rota final para redirecionar qualquer acesso para o index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Porta dinâmica para Render ou local
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
