@@ -1,966 +1,1147 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Corte & Estilo - Agendamento Online</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
     <style>
-        :root {
-            --primary: #1a1a1a;
-            --secondary: #d4af37;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --accent: #2c2c2c;
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f5f5;
-            color: var(--primary);
-            background-image: url('https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
-            position: relative;
-            margin: 0;
-        }
+      :root {
+        --primary: #1a1a1a;
+        --secondary: #d4af37;
+        --light: #f8f9fa;
+        --dark: #343a40;
+        --accent: #2c2c2c;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f5f5f5;
+        color: var(--primary);
+        background-image: url("https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80");
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+        position: relative;
+        margin: 0;
+      }
 
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            z-index: -1;
-        }
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        z-index: -1;
+      }
 
-        /* Navbar */
-        .navbar {
-            background-color: rgba(26, 26, 26, 0.95) !important;
-            border-bottom: 2px solid var(--secondary);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            padding: 15px 0;
-        }
+      /* Navbar */
+      .navbar {
+        background-color: rgba(26, 26, 26, 0.95) !important;
+        border-bottom: 2px solid var(--secondary);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        padding: 15px 0;
+      }
 
-        .navbar-brand {
-            font-weight: 700;
-            color: var(--secondary) !important;
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-        }
+      .navbar-brand {
+        font-weight: 700;
+        color: var(--secondary) !important;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+      }
 
-        .navbar-brand i {
-            margin-right: 10px;
-            font-size: 1.5rem;
-        }
+      .navbar-brand i {
+        margin-right: 10px;
+        font-size: 1.5rem;
+      }
 
-        .nav-link {
-            color: var(--light) !important;
-            font-weight: 500;
-            margin: 0 15px;
-            padding: 10px 20px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
+      .nav-link {
+        color: var(--light) !important;
+        font-weight: 500;
+        margin: 0 15px;
+        padding: 10px 20px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+      }
 
-        .nav-link:hover, .nav-link.active {
-            color: var(--secondary) !important;
-            background-color: rgba(212, 175, 55, 0.2);
-        }
+      .nav-link:hover,
+      .nav-link.active {
+        color: var(--secondary) !important;
+        background-color: rgba(212, 175, 55, 0.2);
+      }
 
-        /* Hero Section */
-        .hero {
-            padding: 120px 0;
-            color: white;
-            text-align: center;
-        }
+      /* Hero Section */
+      .hero {
+        padding: 120px 0;
+        color: white;
+        text-align: center;
+      }
 
-        .hero h1 {
-            font-size: 4rem;
-            font-weight: 800;
-            margin-bottom: 25px;
-            color: var(--secondary);
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-        }
+      .hero h1 {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 25px;
+        color: var(--secondary);
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      }
 
-        .hero p {
-            font-size: 1.3rem;
-            max-width: 750px;
-            margin: 0 auto 40px;
-            opacity: 0.9;
-        }
+      .hero p {
+        font-size: 1.3rem;
+        max-width: 750px;
+        margin: 0 auto 40px;
+        opacity: 0.9;
+      }
 
-        .btn-gold {
-            background-color: var(--secondary);
-            color: var(--primary);
-            font-weight: 600;
-            padding: 12px 30px;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            border: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+      .btn-gold {
+        background-color: var(--secondary);
+        color: var(--primary);
+        font-weight: 600;
+        padding: 12px 30px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        border: none;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-        .btn-gold:hover {
-            background-color: #c9a227;
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
-        }
+      .btn-gold:hover {
+        background-color: #c9a227;
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+      }
 
-        /* Sections */
-        .section {
-            padding: 100px 0;
-            background-color: rgba(26, 26, 26, 0.92);
-            margin: 60px 0;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            color: white;
-        }
+      /* Sections */
+      .section {
+        padding: 100px 0;
+        background-color: rgba(26, 26, 26, 0.92);
+        margin: 60px 0;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        color: white;
+      }
 
-        .section-title {
-            text-align: center;
-            margin-bottom: 60px;
-            color: var(--secondary);
-            font-size: 2.5rem;
-            font-weight: 700;
-            position: relative;
-        }
+      .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+        color: var(--secondary);
+        font-size: 2.5rem;
+        font-weight: 700;
+        position: relative;
+      }
 
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 120px;
-            height: 4px;
-            background-color: var(--secondary);
-            margin: 20px auto 0;
-            border-radius: 2px;
-        }
+      .section-title::after {
+        content: "";
+        display: block;
+        width: 120px;
+        height: 4px;
+        background-color: var(--secondary);
+        margin: 20px auto 0;
+        border-radius: 2px;
+      }
 
-        /* Price Cards */
-        .price-card {
-            background-color: rgba(255, 255, 255, 0.12);
-            border-radius: 15px;
-            padding: 35px;
-            margin-bottom: 30px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
+      /* Price Cards */
+      .price-card {
+        background-color: rgba(255, 255, 255, 0.12);
+        border-radius: 15px;
+        padding: 35px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+      }
 
-        .price-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            border-color: var(--secondary);
-        }
+      .price-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        border-color: var(--secondary);
+      }
 
-        .price-card h3 {
-            color: var(--secondary);
-            font-weight: 700;
-            font-size: 1.8rem;
-        }
+      .price-card h3 {
+        color: var(--secondary);
+        font-weight: 700;
+        font-size: 1.8rem;
+      }
 
-        .price {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: white;
-            margin: 25px 0;
-        }
+      .price {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: white;
+        margin: 25px 0;
+      }
 
-        /* Chatbot Section */
-        .chatbot-container {
-            background-color: rgba(26, 26, 26, 0.95);
-            padding: 40px;
-            border-radius: 15px;
-            border: 1px solid var(--secondary);
-            max-width: 700px;
-            margin: 0 auto;
-        }
+      /* Chatbot Section */
+      .chatbot-container {
+        background-color: rgba(26, 26, 26, 0.95);
+        padding: 40px;
+        border-radius: 15px;
+        border: 1px solid var(--secondary);
+        max-width: 700px;
+        margin: 0 auto;
+      }
 
-        .chatbot-messages {
-            height: 400px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
+      .chatbot-messages {
+        height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+      }
 
-        .chatbot-message {
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            border-radius: 10px;
-        }
+      .chatbot-message {
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        border-radius: 10px;
+      }
 
-        .chatbot-message.bot {
-            background-color: rgba(212, 175, 55, 0.2);
-            color: white;
-        }
+      .chatbot-message.bot {
+        background-color: rgba(212, 175, 55, 0.2);
+        color: white;
+      }
 
-        .chatbot-message.user {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            text-align: right;
-        }
+      .chatbot-message.user {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        text-align: right;
+      }
 
-        .chatbot-input {
-            display: flex;
-            gap: 10px;
-        }
+      .chatbot-input {
+        display: flex;
+        gap: 10px;
+      }
 
-        .chatbot-input input {
-            flex: 1;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 12px;
-            border-radius: 25px;
-        }
+      .chatbot-input input {
+        flex: 1;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 12px;
+        border-radius: 25px;
+      }
 
-        .chatbot-input input:focus {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: var(--secondary);
-            outline: none;
-        }
+      .chatbot-input input:focus {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-color: var(--secondary);
+        outline: none;
+      }
 
-        /* Modal de Horários */
-        .horarios-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
+      /* Modal de Horários */
+      .horarios-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 20px;
+      }
 
-        .horario-btn {
-            padding: 10px;
-            border: 1px solid var(--secondary);
-            background: rgba(212, 175, 55, 0.1);
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+      .horario-btn {
+        padding: 10px;
+        border: 1px solid var(--secondary);
+        background: rgba(212, 175, 55, 0.1);
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
 
-        .horario-btn:hover {
-            background: rgba(212, 175, 55, 0.3);
-        }
+      .horario-btn:hover {
+        background: rgba(212, 175, 55, 0.3);
+      }
 
-        .horario-btn.reservado {
-            background: rgba(255, 0, 0, 0.2);
-            border-color: #ff0000;
-            cursor: not-allowed;
-        }
+      .horario-btn.reservado {
+        background: rgba(255, 0, 0, 0.2);
+        border-color: #ff0000;
+        cursor: not-allowed;
+      }
 
-        /* Painel Admin */
-        .admin-panel {
-            background-color: rgba(26, 26, 26, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 30px;
-            display: none;
-        }
+      /* Painel Admin */
+      .admin-panel {
+        background-color: rgba(26, 26, 26, 0.95);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 30px;
+        display: none;
+      }
 
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+      .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
 
-        .admin-table th, .admin-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+      .admin-table th,
+      .admin-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
 
-        .admin-table th {
-            background-color: rgba(212, 175, 55, 0.3);
-            color: var(--secondary);
-        }
+      .admin-table th {
+        background-color: rgba(212, 175, 55, 0.3);
+        color: var(--secondary);
+      }
 
-        .admin-table tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
+      .admin-table tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
 
-        /* Footer */
-        footer {
-            background-color: var(--primary);
-            color: white;
-            padding: 40px 0;
-            text-align: center;
-        }
+      /* Footer */
+      footer {
+        background-color: var(--primary);
+        color: white;
+        padding: 40px 0;
+        text-align: center;
+      }
 
-        .social-icons a {
-            color: white;
-            font-size: 1.8rem;
-            margin: 0 15px;
-            transition: all 0.3s ease;
-        }
+      .social-icons a {
+        color: white;
+        font-size: 1.8rem;
+        margin: 0 15px;
+        transition: all 0.3s ease;
+      }
 
-        .social-icons a:hover {
-            color: var(--secondary);
-            transform: translateY(-7px);
-        }
+      .social-icons a:hover {
+        color: var(--secondary);
+        transform: translateY(-7px);
+      }
 
-        /* Service Items */
-        .service-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
+      /* Service Items */
+      .service-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+      }
 
-        .service-item:hover {
-            background-color: rgba(212, 175, 55, 0.15);
-            transform: translateX(15px);
-        }
+      .service-item:hover {
+        background-color: rgba(212, 175, 55, 0.15);
+        transform: translateX(15px);
+      }
 
-        .service-icon {
-            font-size: 1.8rem;
-            color: var(--secondary);
-            margin-right: 20px;
-            width: 50px;
-            text-align: center;
-        }
+      .service-icon {
+        font-size: 1.8rem;
+        color: var(--secondary);
+        margin-right: 20px;
+        width: 50px;
+        text-align: center;
+      }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.8rem;
-            }
+      /* Responsive */
+      /* Adicione estas regras ao seu CSS existente */
 
-            .section {
-                padding: 60px 0;
-                margin: 30px 0;
-            }
+      /* Substitua a parte responsiva do chatbot no seu CSS existente por isso: */
 
-            .chatbot-container {
-                padding: 20px;
-            }
+@media (max-width: 768px) {
+    .chatbot-container {
+        padding: 15px !important;
+        margin: 0 10px;
+    }
+    
+    .chatbot-messages {
+        height: 300px !important;
+        padding: 10px !important;
+        font-size: 0.9rem;
+    }
+    
+    .chatbot-message {
+        padding: 8px 12px !important;
+        margin-bottom: 10px !important;
+        font-size: 0.9rem;
+    }
+    
+    .chatbot-input {
+        flex-direction: row; /* Mantém em linha mesmo no mobile */
+        gap: 8px; /* Espaço menor entre input e botão */
+    }
+    
+    .chatbot-input input {
+        width: 100% !important;
+        padding: 8px 12px !important; /* Padding reduzido */
+    }
+    
+    .chatbot-input button {
+        width: auto; /* Largura automática baseada no conteúdo */
+        padding: 8px 15px !important; /* Padding reduzido */
+        font-size: 0.85rem; /* Fonte um pouco menor */
+        white-space: nowrap; /* Evita quebra de texto */
+    }
+}
 
-            .navbar-brand {
-                font-size: 1.5rem;
-            }
-
-            .nav-link {
-                margin: 5px 0;
-                text-align: center;
-            }
-
-            .horarios-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .admin-table {
-                display: block;
-                overflow-x: auto;
-            }
-            .admin-table th, .admin-table td {
-                min-width: 100px;
-                font-size: 0.9rem;
-                padding: 8px;
-            }
-        }
+@media (max-width: 480px) {
+    .chatbot-input button {
+        padding: 8px 12px !important; /* Padding ainda menor em telas pequenas */
+    }
+}   
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#home">
-                <i class="fas fa-cut"></i> Corte & Estilo
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#home">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#services">Serviços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#pricing">Preços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#booking">Agendamento</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="adminToggle">Admin</a>
-                    </li>
-                </ul>
-            </div>
+      <div class="container">
+        <a class="navbar-brand" href="#home">
+          <i class="fas fa-cut"></i> Corte & Estilo
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#home">Início</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#services">Serviços</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#pricing">Preços</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#booking">Agendamento</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="adminToggle">Admin</a>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
-        <div class="container">
-            <h1>Transforme seu Estilo</h1>
-            <p class="lead">Descubra a melhor experiência em cortes e cuidados masculinos. Agende agora e sinta a diferença!</p>
-            <a href="#booking" class="btn btn-gold btn-lg">Agendar Horário</a>
-        </div>
+      <div class="container">
+        <h1>Transforme seu Estilo</h1>
+        <p class="lead">
+          Descubra a melhor experiência em cortes e cuidados masculinos. Agende
+          agora e sinta a diferença!
+        </p>
+        <a href="#booking" class="btn btn-gold btn-lg">Agendar Horário</a>
+      </div>
     </section>
 
     <!-- Services Section -->
     <section id="services" class="section">
-        <div class="container">
-            <h2 class="section-title">Nossos Serviços</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="service-item">
-                        <div class="service-icon"><i class="fas fa-cut"></i></div>
-                        <div>
-                            <h4>Corte de Cabelo</h4>
-                            <p>Estilos modernos e personalizados para realçar sua personalidade.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="service-item">
-                        <div class="service-icon"><i class="fas fa-air-freshener"></i></div>
-                        <div>
-                            <h4>Barba</h4>
-                            <p>Modelagem precisa com produtos premium para um visual impecável.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="service-item">
-                        <div class="service-icon"><i class="fas fa-spa"></i></div>
-                        <div>
-                            <h4>Hidratação</h4>
-                            <p>Cuidados especiais para cabelo e barba com resultados duradouros.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="service-item">
-                        <div class="service-icon"><i class="fas fa-magic"></i></div>
-                        <div>
-                            <h4>Pigmentação</h4>
-                            <p>Técnica natural para disfarçar fios brancos com perfeição.</p>
-                        </div>
-                    </div>
-                </div>
+      <div class="container">
+        <h2 class="section-title">Nossos Serviços</h2>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="service-item">
+              <div class="service-icon"><i class="fas fa-cut"></i></div>
+              <div>
+                <h4>Corte de Cabelo</h4>
+                <p>
+                  Estilos modernos e personalizados para realçar sua
+                  personalidade.
+                </p>
+              </div>
             </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="fas fa-air-freshener"></i>
+              </div>
+              <div>
+                <h4>Barba</h4>
+                <p>
+                  Modelagem precisa com produtos premium para um visual
+                  impecável.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-item">
+              <div class="service-icon"><i class="fas fa-spa"></i></div>
+              <div>
+                <h4>Hidratação</h4>
+                <p>
+                  Cuidados especiais para cabelo e barba com resultados
+                  duradouros.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-item">
+              <div class="service-icon"><i class="fas fa-magic"></i></div>
+              <div>
+                <h4>Pigmentação</h4>
+                <p>
+                  Técnica natural para disfarçar fios brancos com perfeição.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Pricing Section -->
     <section id="pricing" class="section">
-        <div class="container">
-            <h2 class="section-title">Tabela de Preços</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="price-card">
-                        <h3>Corte Básico</h3>
-                        <div class="price">R$ 40</div>
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i> Corte com tesoura</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Estilo personalizado</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Aparada nas laterais</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="price-card">
-                        <h3>Corte Premium</h3>
-                        <div class="price">R$ 60</div>
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i> Corte com tesoura e máquina</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Degradê ou undercut</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Lavagem incluída</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="price-card">
-                        <h3>Barba Completa</h3>
-                        <div class="price">R$ 35</div>
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i> Aparar e modelar</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Aplicação de óleo</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Hidratação</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="price-card">
-                        <h3>Combo Corte + Barba</h3>
-                        <div class="price">R$ 80</div>
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i> Corte Premium</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Barba Completa</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Brinde especial</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="price-card">
-                        <h3>Hidratação</h3>
-                        <div class="price">R$ 25</div>
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i> Tratamento capilar</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Produtos premium</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Massagem relaxante</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="price-card">
-                        <h3>Pigmentação</h3>
-                        <div class="price">R$ 50</div>
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i> Disfarce de fios brancos</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Produtos naturais</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Duração de 4 semanas</li>
-                        </ul>
-                    </div>
-                </div>
+      <div class="container">
+        <h2 class="section-title">Tabela de Preços</h2>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="price-card">
+              <h3>Corte Básico</h3>
+              <div class="price">R$ 40</div>
+              <ul class="list-unstyled">
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Corte com
+                  tesoura
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Estilo
+                  personalizado
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Aparada nas
+                  laterais
+                </li>
+              </ul>
             </div>
+          </div>
+          <div class="col-md-4">
+            <div class="price-card">
+              <h3>Corte Premium</h3>
+              <div class="price">R$ 60</div>
+              <ul class="list-unstyled">
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Corte com
+                  tesoura e máquina
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Degradê ou
+                  undercut
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Lavagem
+                  incluída
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="price-card">
+              <h3>Barba Completa</h3>
+              <div class="price">R$ 35</div>
+              <ul class="list-unstyled">
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Aparar e
+                  modelar
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Aplicação de
+                  óleo
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Hidratação
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="price-card">
+              <h3>Combo Corte + Barba</h3>
+              <div class="price">R$ 80</div>
+              <ul class="list-unstyled">
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Corte Premium
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Barba Completa
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Brinde especial
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="price-card">
+              <h3>Hidratação</h3>
+              <div class="price">R$ 25</div>
+              <ul class="list-unstyled">
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Tratamento
+                  capilar
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Produtos
+                  premium
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Massagem
+                  relaxante
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="price-card">
+              <h3>Pigmentação</h3>
+              <div class="price">R$ 50</div>
+              <ul class="list-unstyled">
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Disfarce de
+                  fios brancos
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Produtos
+                  naturais
+                </li>
+                <li>
+                  <i class="fas fa-check text-success me-2"></i> Duração de 4
+                  semanas
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Chatbot Booking Section -->
     <section id="booking" class="section">
-        <div class="container">
-            <h2 class="section-title">Agendamento Online</h2>
-            <div class="chatbot-container">
-                <div class="chatbot-messages" id="chatbotMessages"></div>
-                <div class="chatbot-input">
-                    <input type="text" id="chatbotInput" placeholder="Digite sua resposta...">
-                    <button class="btn btn-gold" onclick="sendMessage()">Enviar</button>
-                </div>
-            </div>
-            
-            <!-- Painel Admin -->
-            <div class="admin-panel" id="adminPanel">
-                <h3 class="text-center mb-4">Painel de Agendamentos</h3>
-                <div class="d-flex justify-content-between mb-3">
-                    <input type="date" id="filterDate" class="form-control w-50">
-                    <div>
-                        <button class="btn btn-gold ms-2" onclick="loadAgendamentos()">Filtrar</button>
-                        <button class="btn btn-secondary ms-2" onclick="clearFilter()">Limpar Filtro</button>
-                    </div>
-                </div>
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Telefone</th>
-                            <th>Serviço</th>
-                            <th>Barbeiro</th>
-                            <th>Data</th>
-                            <th>Horário</th>
-                            <th>Observações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="agendamentosTable">
-                        <!-- Dados serão preenchidos via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
+      <div class="container">
+        <h2 class="section-title">Agendamento Online</h2>
+        <div class="chatbot-container">
+          <div class="chatbot-messages" id="chatbotMessages"></div>
+          <div class="chatbot-input">
+            <input
+              type="text"
+              id="chatbotInput"
+              placeholder="Digite sua resposta..."
+            />
+            <button class="btn btn-gold" onclick="sendMessage()">Enviar</button>
+          </div>
         </div>
+
+        <!-- Painel Admin -->
+        <div class="admin-panel" id="adminPanel">
+          <h3 class="text-center mb-4">Painel de Agendamentos</h3>
+          <div class="d-flex justify-content-between mb-3">
+            <input type="date" id="filterDate" class="form-control w-50" />
+            <div>
+              <button class="btn btn-gold ms-2" onclick="loadAgendamentos()">
+                Filtrar
+              </button>
+              <button class="btn btn-secondary ms-2" onclick="clearFilter()">
+                Limpar Filtro
+              </button>
+            </div>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Serviço</th>
+                <th>Barbeiro</th>
+                <th>Data</th>
+                <th>Horário</th>
+                <th>Observações</th>
+              </tr>
+            </thead>
+            <tbody id="agendamentosTable">
+              <!-- Dados serão preenchidos via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
     <!-- Modal de Horários -->
     <div class="modal fade" id="horariosModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title">Horários disponíveis para <span id="modalDate"></span></h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="horarios-container" id="horariosContainer">
-                        <!-- Horários serão gerados dinamicamente -->
-                    </div>
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                </div>
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title">
+              Horários disponíveis para <span id="modalDate"></span>
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="horarios-container" id="horariosContainer">
+              <!-- Horários serão gerados dinamicamente -->
             </div>
+          </div>
+          <div class="modal-footer border-secondary">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Fechar
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <div class="social-icons mb-4">
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-whatsapp"></i></a>
-            </div>
-            <p>© 2023 Corte & Estilo - Todos os direitos reservados</p>
-            <p class="mt-3">
-                <i class="fas fa-map-marker-alt me-2"></i> Rua do Corte, 123 - Centro, Sua Cidade
-                <br>
-                <i class="fas fa-phone me-2"></i> (00) 1234-5678
-            </p>
+      <div class="container">
+        <div class="social-icons mb-4">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
         </div>
+        <p>© 2023 Corte & Estilo - Todos os direitos reservados</p>
+        <p class="mt-3">
+          <i class="fas fa-map-marker-alt me-2"></i> Rua do Corte, 123 - Centro,
+          Sua Cidade
+          <br />
+          <i class="fas fa-phone me-2"></i> (00) 1234-5678
+        </p>
+      </div>
     </footer>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
- <script>
-    // Elementos do DOM
-    let chatbotMessages, chatbotInput, adminPanel, adminToggle, agendamentosTable, filterDate, horariosModal, horariosContainer, modalDate;
+    <script>
+      // Elementos do DOM
+      let chatbotMessages,
+        chatbotInput,
+        adminPanel,
+        adminToggle,
+        agendamentosTable,
+        filterDate,
+        horariosModal,
+        horariosContainer,
+        modalDate;
 
-    // Estado do agendamento
-    let currentStep = 0;
-    let bookingData = {};
-    let selectedDate = '';
+      // Estado do agendamento
+      let currentStep = 0;
+      let bookingData = {};
+      let selectedDate = "";
 
-    // Horários disponíveis
-    const horariosDisponiveis = [
-        '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-        '11:00', '11:30', '13:00', '13:30', '14:00', '14:30',
-        '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
-    ];
+      // Horários disponíveis
+      const horariosDisponiveis = [
+        "08:00",
+        "08:30",
+        "09:00",
+        "09:30",
+        "10:00",
+        "10:30",
+        "11:00",
+        "11:30",
+        "13:00",
+        "13:30",
+        "14:00",
+        "14:30",
+        "15:00",
+        "15:30",
+        "16:00",
+        "16:30",
+        "17:00",
+        "17:30",
+      ];
 
-    // Passos do chatbot
-    const steps = [
+      // Passos do chatbot
+      const steps = [
         {
-            message: "Olá! Bem-vindo ao agendamento da Corte & Estilo. Qual é o seu nome completo?",
-            field: 'nome'
+          message:
+            "Olá! Bem-vindo ao agendamento da Corte & Estilo. Qual é o seu nome completo?",
+          field: "nome",
         },
         {
-            message: "Perfeito! Qual é o seu número de WhatsApp? (Ex: 11999999999)",
-            field: 'telefone'
+          message:
+            "Perfeito! Qual é o seu número de WhatsApp? (Ex: 11999999999)",
+          field: "telefone",
         },
         {
-            message: "Qual serviço você deseja agendar? (Digite o número)\n1. Corte Básico (R$40)\n2. Corte Premium (R$60)\n3. Barba Completa (R$35)\n4. Combo Corte + Barba (R$80)\n5. Hidratação (R$25)\n6. Pigmentação (R$50)",
-            field: 'servico',
-            options: {
-                '1': 'Corte Básico',
-                '2': 'Corte Premium',
-                '3': 'Barba Completa',
-                '4': 'Combo Corte + Barba',
-                '5': 'Hidratação',
-                '6': 'Pigmentação'
-            }
+          message:
+            "Qual serviço você deseja agendar? (Digite o número)\n1. Corte Básico (R$40)\n2. Corte Premium (R$60)\n3. Barba Completa (R$35)\n4. Combo Corte + Barba (R$80)\n5. Hidratação (R$25)\n6. Pigmentação (R$50)",
+          field: "servico",
+          options: {
+            1: "Corte Básico",
+            2: "Corte Premium",
+            3: "Barba Completa",
+            4: "Combo Corte + Barba",
+            5: "Hidratação",
+            6: "Pigmentação",
+          },
         },
         {
-            message: "Qual barbeiro você prefere? (Digite o número)\n1. Marcos\n2. Ricardo\n3. Carlos\n4. Qualquer um",
-            field: 'barbeiro',
-            options: {
-                '1': 'Marcos',
-                '2': 'Ricardo',
-                '3': 'Carlos',
-                '4': 'Qualquer um'
-            }
+          message:
+            "Qual barbeiro você prefere? (Digite o número)\n1. Marcos\n2. Ricardo\n3. Carlos\n4. Qualquer um",
+          field: "barbeiro",
+          options: {
+            1: "Marcos",
+            2: "Ricardo",
+            3: "Carlos",
+            4: "Qualquer um",
+          },
         },
         {
-            message: "Por favor, selecione uma data para o agendamento (clique no campo abaixo):",
-            field: 'data',
-            isDate: true
+          message:
+            "Por favor, selecione uma data para o agendamento (clique no campo abaixo):",
+          field: "data",
+          isDate: true,
         },
         {
-            message: "Por favor, selecione um horário disponível:",
-            field: 'horario',
-            isTime: true
+          message: "Por favor, selecione um horário disponível:",
+          field: "horario",
+          isTime: true,
         },
         {
-            message: "Alguma observação adicional? (Digite 'nenhuma' se não houver)",
-            field: 'observacoes'
+          message:
+            "Alguma observação adicional? (Digite 'nenhuma' se não houver)",
+          field: "observacoes",
+        },
+      ];
+
+      // Inicialização
+      document.addEventListener("DOMContentLoaded", () => {
+        chatbotMessages = document.getElementById("chatbotMessages");
+        chatbotInput = document.getElementById("chatbotInput");
+        adminPanel = document.getElementById("adminPanel");
+        adminToggle = document.getElementById("adminToggle");
+        agendamentosTable = document.getElementById("agendamentosTable");
+        filterDate = document.getElementById("filterDate");
+        horariosContainer = document.getElementById("horariosContainer");
+        modalDate = document.getElementById("modalDate");
+
+        if (typeof bootstrap === "undefined" || !bootstrap.Modal) {
+          console.error(
+            "Bootstrap Modal não está disponível. Verifique o carregamento do script."
+          );
+          return;
         }
-    ];
+        horariosModal = new bootstrap.Modal(
+          document.getElementById("horariosModal"),
+          {
+            backdrop: "static",
+            keyboard: false,
+          }
+        );
 
-    // Inicialização
-    document.addEventListener('DOMContentLoaded', () => {
-        chatbotMessages = document.getElementById('chatbotMessages');
-        chatbotInput = document.getElementById('chatbotInput');
-        adminPanel = document.getElementById('adminPanel');
-        adminToggle = document.getElementById('adminToggle');
-        agendamentosTable = document.getElementById('agendamentosTable');
-        filterDate = document.getElementById('filterDate');
-        horariosContainer = document.getElementById('horariosContainer');
-        modalDate = document.getElementById('modalDate');
-
-        if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
-            console.error('Bootstrap Modal não está disponível. Verifique o carregamento do script.');
-            return;
-        }
-        horariosModal = new bootstrap.Modal(document.getElementById('horariosModal'), {
-            backdrop: 'static',
-            keyboard: false
-        });
-
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date().toISOString().split("T")[0];
         filterDate.value = today;
 
         addMessage(steps[0].message);
         loadAgendamentos();
-    });
+      });
 
-    // Toggle painel admin
-    adminToggle.addEventListener('click', (e) => {
+      // Toggle painel admin
+      adminToggle.addEventListener("click", (e) => {
         e.preventDefault();
-        adminPanel.style.display = adminPanel.style.display === 'none' ? 'block' : 'none';
-        if (adminPanel.style.display === 'block') {
-            loadAgendamentos();
+        adminPanel.style.display =
+          adminPanel.style.display === "none" ? "block" : "none";
+        if (adminPanel.style.display === "block") {
+          loadAgendamentos();
         }
-    });
+      });
 
-    // Adicionar mensagem ao chat
-    function addMessage(message, type = 'bot') {
-        const msgDiv = document.createElement('div');
+      // Adicionar mensagem ao chat
+      function addMessage(message, type = "bot") {
+        const msgDiv = document.createElement("div");
         msgDiv.className = `chatbot-message ${type}`;
-        
-        if (type === 'bot' && steps[currentStep]?.isDate) {
-            msgDiv.innerHTML = `${message}<br><br>
+
+        if (type === "bot" && steps[currentStep]?.isDate) {
+          msgDiv.innerHTML = `${message}<br><br>
                 <input type="text" id="datePicker" class="form-control" placeholder="Selecione uma data" readonly>`;
-            chatbotMessages.appendChild(msgDiv);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+          chatbotMessages.appendChild(msgDiv);
+          chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 
-            flatpickr("#datePicker", {
-                locale: "pt",
-                minDate: "today",
-                dateFormat: "d/m/Y",
-                onChange: function(selectedDates, dateStr) {
-                    console.log('Data selecionada:', dateStr);
-                    selectedDate = dateStr;
-                    bookingData.data = dateStr;
-                    currentStep++;
-                    showTimeSelection(dateStr);
-                }
-            });
+          flatpickr("#datePicker", {
+            locale: "pt",
+            minDate: "today",
+            dateFormat: "d/m/Y",
+            onChange: function (selectedDates, dateStr) {
+              console.log("Data selecionada:", dateStr);
+              selectedDate = dateStr;
+              bookingData.data = dateStr;
+              currentStep++;
+              showTimeSelection(dateStr);
+            },
+          });
         } else {
-            msgDiv.textContent = message;
-            chatbotMessages.appendChild(msgDiv);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+          msgDiv.textContent = message;
+          chatbotMessages.appendChild(msgDiv);
+          chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
         }
-    }
+      }
 
-    // Mostrar seleção de horários
-    async function showTimeSelection(date) {
+      // Mostrar seleção de horários
+      async function showTimeSelection(date) {
         try {
-            modalDate.textContent = date;
-            horariosContainer.innerHTML = '';
+          modalDate.textContent = date;
+          horariosContainer.innerHTML = "";
 
-            let reservados = [];
-            try {
-                reservados = await getAgendamentosPorData(formatDateForAPI(date));
-            } catch (error) {
-                console.error('Erro ao obter agendamentos, usando lista vazia:', error);
-                reservados = [];
+          let reservados = [];
+          try {
+            reservados = await getAgendamentosPorData(formatDateForAPI(date));
+          } catch (error) {
+            console.error(
+              "Erro ao obter agendamentos, usando lista vazia:",
+              error
+            );
+            reservados = [];
+          }
+
+          horariosDisponiveis.forEach((horario) => {
+            const btn = document.createElement("button");
+            btn.className = "horario-btn";
+            btn.textContent = horario;
+
+            const estaReservado = reservados.some(
+              (ag) => ag.horario === horario
+            );
+            if (estaReservado) {
+              btn.classList.add("reservado");
+              btn.disabled = true;
+              btn.title = "Horário já reservado";
+            } else {
+              btn.addEventListener("click", () => {
+                bookingData.horario = horario;
+                horariosModal.hide();
+                addMessage(`Horário selecionado: ${horario}`);
+                currentStep++;
+                addMessage(steps[currentStep].message);
+              });
             }
 
-            horariosDisponiveis.forEach(horario => {
-                const btn = document.createElement('button');
-                btn.className = 'horario-btn';
-                btn.textContent = horario;
+            horariosContainer.appendChild(btn);
+          });
 
-                const estaReservado = reservados.some(ag => ag.horario === horario);
-                if (estaReservado) {
-                    btn.classList.add('reservado');
-                    btn.disabled = true;
-                    btn.title = 'Horário já reservado';
-                } else {
-                    btn.addEventListener('click', () => {
-                        bookingData.horario = horario;
-                        horariosModal.hide();
-                        addMessage(`Horário selecionado: ${horario}`);
-                        currentStep++;
-                        addMessage(steps[currentStep].message);
-                    });
-                }
-
-                horariosContainer.appendChild(btn);
-            });
-
-            console.log('Tentando exibir o modal para a data:', date);
-            horariosModal.show();
+          console.log("Tentando exibir o modal para a data:", date);
+          horariosModal.show();
         } catch (error) {
-            console.error('Erro em showTimeSelection:', error);
-            addMessage('Erro ao carregar horários. Tente novamente.');
+          console.error("Erro em showTimeSelection:", error);
+          addMessage("Erro ao carregar horários. Tente novamente.");
         }
-    }
+      }
 
-    // Enviar mensagem do usuário
-    function sendMessage() {
+      // Enviar mensagem do usuário
+      function sendMessage() {
         const userInput = chatbotInput.value.trim();
         if (!userInput) return;
 
-        addMessage(userInput, 'user');
-        chatbotInput.value = '';
+        addMessage(userInput, "user");
+        chatbotInput.value = "";
 
         if (currentStep < steps.length) {
-            const step = steps[currentStep];
-            
-            if (step.options && step.options[userInput]) {
-                bookingData[step.field] = step.options[userInput];
-            } else {
-                bookingData[step.field] = userInput;
-            }
+          const step = steps[currentStep];
 
-            currentStep++;
-            
-            if (currentStep >= steps.length) {
-                saveAgendamento();
-            } else if (steps[currentStep]?.isDate) {
-                addMessage(steps[currentStep].message);
-            } else {
-                setTimeout(() => addMessage(steps[currentStep].message), 500);
-            }
+          if (step.options && step.options[userInput]) {
+            bookingData[step.field] = step.options[userInput];
+          } else {
+            bookingData[step.field] = userInput;
+          }
+
+          currentStep++;
+
+          if (currentStep >= steps.length) {
+            saveAgendamento();
+          } else if (steps[currentStep]?.isDate) {
+            addMessage(steps[currentStep].message);
+          } else {
+            setTimeout(() => addMessage(steps[currentStep].message), 500);
+          }
         }
-    }
+      }
 
-    // Formatar data para a API (DD/MM/YYYY → YYYY-MM-DD)
-    function formatDateForAPI(dateStr) {
-        const [day, month, year] = dateStr.split('/');
-        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    }
+      // Formatar data para a API (DD/MM/YYYY → YYYY-MM-DD)
+      function formatDateForAPI(dateStr) {
+        const [day, month, year] = dateStr.split("/");
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      }
 
-    // Salvar agendamento
-    async function saveAgendamento() {
+      // Salvar agendamento
+      async function saveAgendamento() {
         try {
-            console.log('Dados do agendamento:', bookingData);
+          console.log("Dados do agendamento:", bookingData);
 
-            bookingData.data = formatDateForAPI(bookingData.data);
+          bookingData.data = formatDateForAPI(bookingData.data);
 
-            // FIX: Usar backend real
-            const useMockAPI = false;
-            let response, data;
+          // FIX: Usar backend real
+          const useMockAPI = false;
+          let response, data;
 
-            if (useMockAPI) {
-                const agendamento = { ...bookingData, id: mockAgendamentos.length + 1 };
-                mockAgendamentos.push(agendamento);
-                data = { success: true };
-                addMessage("Agendamento realizado com sucesso! Entraremos em contato para confirmar.");
-                addMessage("As informações do agendamento foram enviadas ao dono por e-mail.");
-            } else {
-                response = await fetch('http://localhost:3000/api/agendamentos', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(bookingData)
-                });
-                data = await response.json();
-                if (data.success) {
-                    addMessage("Agendamento realizado com sucesso! Entraremos em contato para confirmar.");
-                    addMessage("As informações do agendamento foram enviadas ao dono por e-mail.");
-                }
-            }
-
-            if (!data.success) {
-                addMessage("Ocorreu um erro ao agendar. Por favor, tente novamente.");
-            }
-
-            currentStep = 0;
-            bookingData = {};
-            setTimeout(() => addMessage(steps[0].message), 2000);
-        } catch (error) {
-            console.error('Erro ao salvar agendamento:', error);
-            addMessage("Erro de conexão. Por favor, tente novamente mais tarde.");
-        }
-    }
-
-    // Carregar agendamentos para o painel admin
-    async function loadAgendamentos() {
-        try {
-            let url = 'http://localhost:3000/api/agendamentos';
-            if (filterDate.value) {
-                url += `?data=${filterDate.value}`;
-            }
-
-            // FIX: Usar backend real
-            const useMockAPI = false;
-            let data;
-
-            if (useMockAPI) {
-                data = { 
-                    success: true, 
-                    data: filterDate.value 
-                        ? mockAgendamentos.filter(ag => ag.data === filterDate.value) 
-                        : mockAgendamentos 
-                };
-            } else {
-                const response = await fetch(url);
-                data = await response.json();
-            }
-
+          if (useMockAPI) {
+            const agendamento = {
+              ...bookingData,
+              id: mockAgendamentos.length + 1,
+            };
+            mockAgendamentos.push(agendamento);
+            data = { success: true };
+            addMessage(
+              "Agendamento realizado com sucesso! Entraremos em contato para confirmar."
+            );
+            addMessage(
+              "As informações do agendamento foram enviadas ao dono por e-mail."
+            );
+          } else {
+            response = await fetch("http://localhost:3000/api/agendamentos", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(bookingData),
+            });
+            data = await response.json();
             if (data.success) {
-                renderAgendamentos(data.data);
-            } else {
-                renderAgendamentos([]);
+              addMessage(
+                "Agendamento realizado com sucesso! Entraremos em contato para confirmar."
+              );
+              addMessage(
+                "As informações do agendamento foram enviadas ao dono por e-mail."
+              );
             }
+          }
+
+          if (!data.success) {
+            addMessage(
+              "Ocorreu um erro ao agendar. Por favor, tente novamente."
+            );
+          }
+
+          currentStep = 0;
+          bookingData = {};
+          setTimeout(() => addMessage(steps[0].message), 2000);
         } catch (error) {
-            console.error('Erro ao carregar agendamentos:', error);
-            renderAgendamentos([]);
+          console.error("Erro ao salvar agendamento:", error);
+          addMessage("Erro de conexão. Por favor, tente novamente mais tarde.");
         }
-    }
+      }
 
-    // Função para limpar o filtro de data
-    function clearFilter() {
-        filterDate.value = '';
-        loadAgendamentos();
-    }
-
-    // Obter agendamentos por data
-    async function getAgendamentosPorData(data) {
+      // Carregar agendamentos para o painel admin
+      async function loadAgendamentos() {
         try {
-            // FIX: Usar backend real
-            const useMockAPI = false;
-            if (useMockAPI) {
-                return mockAgendamentos.filter(ag => ag.data === data);
-            } else {
-                const response = await fetch(`http://localhost:3000/api/agendamentos?data=${data}`);
-                const result = await response.json();
-                return result.success ? result.data : [];
-            }
+          let url = "http://localhost:3000/api/agendamentos";
+          if (filterDate.value) {
+            url += `?data=${filterDate.value}`;
+          }
+
+          // FIX: Usar backend real
+          const useMockAPI = false;
+          let data;
+
+          if (useMockAPI) {
+            data = {
+              success: true,
+              data: filterDate.value
+                ? mockAgendamentos.filter((ag) => ag.data === filterDate.value)
+                : mockAgendamentos,
+            };
+          } else {
+            const response = await fetch(url);
+            data = await response.json();
+          }
+
+          if (data.success) {
+            renderAgendamentos(data.data);
+          } else {
+            renderAgendamentos([]);
+          }
         } catch (error) {
-            console.error('Erro ao obter agendamentos:', error);
-            return [];
+          console.error("Erro ao carregar agendamentos:", error);
+          renderAgendamentos([]);
         }
-    }
+      }
 
-    // Renderizar agendamentos na tabela
-    function renderAgendamentos(agendamentos) {
-        agendamentosTable.innerHTML = '';
-        
+      // Função para limpar o filtro de data
+      function clearFilter() {
+        filterDate.value = "";
+        loadAgendamentos();
+      }
+
+      // Obter agendamentos por data
+      async function getAgendamentosPorData(data) {
+        try {
+          // FIX: Usar backend real
+          const useMockAPI = false;
+          if (useMockAPI) {
+            return mockAgendamentos.filter((ag) => ag.data === data);
+          } else {
+            const response = await fetch(
+              `http://localhost:3000/api/agendamentos?data=${data}`
+            );
+            const result = await response.json();
+            return result.success ? result.data : [];
+          }
+        } catch (error) {
+          console.error("Erro ao obter agendamentos:", error);
+          return [];
+        }
+      }
+
+      // Renderizar agendamentos na tabela
+      function renderAgendamentos(agendamentos) {
+        agendamentosTable.innerHTML = "";
+
         if (agendamentos.length === 0) {
-            agendamentosTable.innerHTML = '<tr><td colspan="8" class="text-center">Nenhum agendamento encontrado</td></tr>';
-            return;
+          agendamentosTable.innerHTML =
+            '<tr><td colspan="8" class="text-center">Nenhum agendamento encontrado</td></tr>';
+          return;
         }
-        
-        agendamentos.forEach(ag => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${ag.id || '-'}</td>
-                <td>${ag.nome || '-'}</td>
-                <td>${ag.telefone || '-'}</td>
-                <td>${ag.servico || '-'}</td>
-                <td>${ag.barbeiro || '-'}</td>
-                <td>${ag.data ? new Date(ag.data).toLocaleDateString('pt-BR') : '-'}</td>
-                <td>${ag.horario || '-'}</td>
-                <td>${ag.observacoes || '-'}</td>
-            `;
-            agendamentosTable.appendChild(row);
-        });
-    }
 
-    // Permitir enviar com Enter
-    chatbotInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
-</script>
-</body>
+        agendamentos.forEach((ag) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                <td>${ag.id || "-"}</td>
+                <td>${ag.nome || "-"}</td>
+                <td>${ag.telefone || "-"}</td>
+                <td>${ag.servico || "-"}</td>
+                <td>${ag.barbeiro || "-"}</td>
+                <td>${
+                  ag.data ? new Date(ag.data).toLocaleDateString("pt-BR") : "-"
+                }</td>
+                <td>${ag.horario || "-"}</td>
+                <td>${ag.observacoes || "-"}</td>
+            `;
+          agendamentosTable.appendChild(row);
+        });
+      }
+
+      // Permitir enviar com Enter
+      chatbotInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+    </script>
+  </body>
 </html>
