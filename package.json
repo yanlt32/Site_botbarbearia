@@ -1,27 +1,21 @@
 {
   "name": "barbearia-agendamento",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "build": "npm rebuild sqlite3",
     "postinstall": "npm rebuild sqlite3"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "API de agendamento para barbearia",
   "dependencies": {
-    "@sendgrid/mail": "^8.1.5",
-    "axios": "^1.9.0",
-    "better-sqlite3": "^11.10.0",
-    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.14.1",
-    "nodemailer": "^7.0.3",
     "sqlite3": "^5.1.7"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

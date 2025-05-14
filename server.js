@@ -4,16 +4,17 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 const app = express();
-const db = new sqlite3.Database('barbearia.db');
-
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.static(path.join(__dirname))); // Serve arquivos estáticos
-
 // Inicializar banco de dados
+const db = new sqlite3.Database('barbearia.db', (err) => {
+  if (err) {
+    console.error("Erro ao abrir banco:", err.message);
+  } else {
+    console.log("Banco de dados conectado/criado com sucesso.");
+  }
+});
+
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS agendamentos (
@@ -28,6 +29,16 @@ db.serialize(() => {
       status TEXT DEFAULT 'Pendente'
     )
   `);
+});
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname))); // Serve arquivos estáticos
+
+// Rota de teste
+app.get('/api/test', (req, res) => {
+  res.json({ success: true, message: 'API funcionando no Render!' });
 });
 
 // Rota de login
