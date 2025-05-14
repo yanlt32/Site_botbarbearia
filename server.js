@@ -1,5 +1,5 @@
 const express = require('express');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail'); // Using SendGrid instead of Nodemailer
 const cors = require('cors');
 const path = require('path');
 
@@ -8,34 +8,30 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname))); // Serve o index.html e outros arquivos estáticos
+app.use(express.static(path.join(__dirname))); // Serve index.html and other static files
 
 // Simulação de banco de dados (em memória)
 let agendamentos = [];
 
-// Configuração do Nodemailer (Gmail)
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'ladeiatortelli8@gmail.com', // Seu e-mail
-        pass: 'kzgnposgzlwuharl' // Senha de app do Gmail
-    }
-});
+// Configuração do SendGrid
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Rota para testar o envio de e-mail
 app.get('/api/test-email', async (req, res) => {
+    const msg = {
+        to: process.env.EMAIL_USER || 'ladeiatortelli8@gmail.com',
+        from: process.env.EMAIL_USER || 'ladeiatortelli8@gmail.com',
+        subject: 'Teste de Envio de E-mail',
+        text: 'Este é um e-mail de teste do sistema Corte & Estilo.'
+    };
+
     try {
-        await transporter.sendMail({
-            from: '"Corte & Estilo" <ladeiatortelli8@gmail.com>',
-            to: 'ladeiatortelli8@gmail.com',
-            subject: 'Teste de Envio de E-mail',
-            text: 'Este é um e-mail de teste do sistema Corte & Estilo.'
-        });
+        await sgMail.send(msg);
         console.log('E-mail de teste enviado com sucesso');
         res.json({ success: true, message: 'E-mail de teste enviado' });
     } catch (error) {
         console.error('Erro ao enviar e-mail de teste:', error);
-        res.json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
@@ -57,19 +53,21 @@ app.post('/api/agendamentos', async (req, res) => {
     Observações: ${agendamento.observacoes || 'Nenhuma'}
     `.trim();
 
+    const msg = {
+        to: process.env.EMAIL_USER || 'ladeiatortelli8@gmail.com',
+        from: process.env.EMAIL_USER || 'ladeiatortelli8@gmail.com',
+        subject: 'Novo Agendamento Recebido',
+        text: emailContent
+    };
+
     try {
-        await transporter.sendMail({
-            from: '"Corte & Estilo" <ladeiatortelli8@gmail.com>',
-            to: 'ladeiatortelli8@gmail.com',
-            subject: 'Novo Agendamento Recebido',
-            text: emailContent
-        });
-        console.log('E-mail enviado com sucesso para:', 'ladeiatortelli8@gmail.com');
+        await sgMail.send(msg);
+        console.log('E-mail enviado com sucesso para:', msg.to);
+        res.json({ success: true, data: agendamento });
     } catch (error) {
         console.error('Erro ao enviar e-mail:', error);
+        res.status(500).json({ success: true, data: agendamento, emailError: error.message });
     }
-
-    res.json({ success: true, data: agendamento });
 });
 
 // Rota para obter agendamentos
