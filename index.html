@@ -275,16 +275,6 @@
         width: 50px;
         text-align: center;
       }
-      #loginModal .form-control {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: white;
-      }
-      #loginModal .form-control:focus {
-        background-color: rgba(255, 255, 255, 0.2);
-        border-color: var(--secondary);
-        outline: none;
-      }
       @media (max-width: 768px) {
         .chatbot-container {
           padding: 15px !important;
@@ -355,7 +345,7 @@
               <a class="nav-link" href="#booking">Agendamento</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="login.html" id="adminToggle">Admin</a>
+              <a class="nav-link" href="login.html">Admin</a>
             </li>
           </ul>
         </div>
@@ -571,16 +561,21 @@
             />
             <button class="btn btn-gold" onclick="sendMessage()">Enviar</button>
           </div>
+          <div class="text-center mt-3">
+            <button class="btn btn-secondary" onclick="resetChatbot()">Reiniciar Chatbot</button>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Modal de Login -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <!-- Modal de Horários -->
+    <div class="modal fade" id="horariosModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content bg-dark">
           <div class="modal-header border-secondary">
-            <h5 class="modal-title">Login do Administrador</h5>
+            <h5 class="modal-title">
+              Horários disponíveis para <span id="modalDate"></span>
+            </h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -589,31 +584,9 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form id="loginForm">
-              <div class="mb-3">
-                <label for="loginUsuario" class="form-label">Usuário</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="loginUsuario"
-                  placeholder="Digite o usuário"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="loginSenha" class="form-label">Senha</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="loginSenha"
-                  placeholder="Digite a senha"
-                  required
-                />
-              </div>
-              <div id="loginError" class="text-danger" style="display: none;">
-                Credenciais inválidas. Tente novamente.
-              </div>
-            </form>
+            <div class="horarios-container" id="horariosContainer">
+              <!-- Horários serão gerados dinamicamente -->
+            </div>
           </div>
           <div class="modal-footer border-secondary">
             <button
@@ -621,21 +594,13 @@
               class="btn btn-secondary"
               data-bs-dismiss="modal"
             >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-gold"
-              onclick="handleLogin()"
-            >
-              Entrar
+              Fechar
             </button>
           </div>
         </div>
       </div>
     </div>
 
-   
     <!-- Footer -->
     <footer>
       <div class="container">
@@ -664,7 +629,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
     <script>
       // Elementos do DOM
-      let chatbotMessages, chatbotInput, adminToggle, horariosModal, horariosContainer, modalDate, loginModal;
+      let chatbotMessages, chatbotInput, horariosModal, horariosContainer, modalDate;
 
       // Estado do agendamento
       let currentStep = 0;
@@ -738,10 +703,8 @@
       document.addEventListener("DOMContentLoaded", () => {
         chatbotMessages = document.getElementById("chatbotMessages");
         chatbotInput = document.getElementById("chatbotInput");
-        adminToggle = document.getElementById("adminToggle");
         horariosContainer = document.getElementById("horariosContainer");
         modalDate = document.getElementById("modalDate");
-        loginModal = new bootstrap.Modal(document.getElementById("loginModal"));
 
         horariosModal = new bootstrap.Modal(document.getElementById("horariosModal"), {
           backdrop: "static",
@@ -753,11 +716,6 @@
           alert("Erro ao carregar a página. Verifique sua conexão ou tente novamente.");
           return;
         }
-
-        adminToggle.addEventListener("click", (e) => {
-          e.preventDefault();
-          loginModal.show();
-        });
 
         addMessage(steps[0].message);
       });
@@ -857,13 +815,12 @@
             if (success) {
               addMessage("Agendamento cancelado com sucesso!");
               if (bookingData.acao === "Cancelar Agendamento") {
-                resetChatbot();
-                return;
+                setTimeout(() => {
+                  resetChatbot();
+                }, 3000); // Aumentado para 3 segundos
               } else {
-                currentStep++; // Prosseguir para o próximo passo (nome, para remarcar)
-                if (steps[currentStep].condition(bookingData)) {
-                  addMessage(steps[currentStep].message);
-                }
+                addMessage("Para remarcar, digite 1 e agende novamente.");
+                resetChatbot();
               }
             } else {
               addMessage("Erro ao cancelar. Tente novamente.");
@@ -959,40 +916,12 @@
         }
       }
 
-      // Handle login
-      async function handleLogin() {
-        const usuario = document.getElementById("loginUsuario").value;
-        const senha = document.getElementById("loginSenha").value;
-        const loginError = document.getElementById("loginError");
-
-        try {
-          const response = await fetch("http://localhost:3000/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ usuario, senha }),
-          });
-          const data = await response.json();
-
-          if (data.success) {
-            localStorage.setItem("token", data.token);
-            loginModal.hide();
-            window.location.href = "/admin.html";
-          } else {
-            loginError.textContent = data.message || "Credenciais inválidas.";
-            loginError.style.display = "block";
-          }
-        } catch (error) {
-          console.error("Erro ao fazer login:", error);
-          loginError.textContent = "Erro de conexão. Tente novamente.";
-          loginError.style.display = "block";
-        }
-      }
-
       // Resetar chatbot
       function resetChatbot() {
         currentStep = 0;
         bookingData = {};
-        setTimeout(() => addMessage(steps[0].message), 2000);
+        chatbotMessages.innerHTML = "";
+        setTimeout(() => addMessage(steps[0].message), 1000);
       }
 
       // Permitir enviar com Enter
