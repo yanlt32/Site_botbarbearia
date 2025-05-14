@@ -563,6 +563,9 @@ body {
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
     <script>
+      // Base URL para a API
+      const API_URL = window.location.origin;
+
       // Elementos do DOM
       let agendamentosTable, filterDate, remarcarModal, remarcarData, remarcarHorariosContainer, confirmarRemarcacao;
 
@@ -601,7 +604,7 @@ body {
       // Carregar agendamentos
       async function loadAgendamentos() {
         try {
-          let url = "http://localhost:3000/api/agendamentos";
+          let url = `${API_URL}/api/agendamentos`;
           if (filterDate.value) {
             url += `?data=${filterDate.value}`;
           }
@@ -620,7 +623,7 @@ body {
         } catch (error) {
           console.error("Erro ao carregar agendamentos:", error);
           renderAgendamentos([]);
-          alert("Erro de conexão. Tente novamente.");
+          alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
         }
       }
 
@@ -669,7 +672,7 @@ body {
       // Confirmar agendamento
       async function confirmarAgendamento(id) {
         try {
-          const response = await fetch(`http://localhost:3000/api/agendamentos/${id}/confirmar`, {
+          const response = await fetch(`${API_URL}/api/agendamentos/${id}/confirmar`, {
             method: "PATCH",
             headers: { Authorization: token, "Content-Type": "application/json" },
           });
@@ -677,12 +680,13 @@ body {
 
           if (result.success) {
             loadAgendamentos();
+            alert("Agendamento confirmado com sucesso!");
           } else {
             alert(result.message || "Erro ao confirmar agendamento.");
           }
         } catch (error) {
           console.error("Erro ao confirmar:", error);
-          alert("Erro de conexão. Tente novamente.");
+          alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
         }
       }
 
@@ -736,7 +740,7 @@ body {
           remarcarModal.show();
         } catch (error) {
           console.error("Erro em showTimeSelection:", error);
-          alert("Erro ao carregar horários. Tente novamente.");
+          alert("Erro ao carregar horários. Verifique sua conexão e tente novamente.");
         }
       }
 
@@ -749,7 +753,7 @@ body {
       // Salvar remarcação
       async function saveRemarcacao(id, data, horario) {
         try {
-          const response = await fetch(`http://localhost:3000/api/agendamentos/${id}/remarcar`, {
+          const response = await fetch(`${API_URL}/api/agendamentos/${id}/remarcar`, {
             method: "PATCH",
             headers: { Authorization: token, "Content-Type": "application/json" },
             body: JSON.stringify({ data: formatDateForAPI(data), horario }),
@@ -758,12 +762,13 @@ body {
 
           if (result.success) {
             loadAgendamentos();
+            alert("Agendamento remarcado com sucesso!");
           } else {
             alert(result.message || "Erro ao remarcar. Tente novamente.");
           }
         } catch (error) {
           console.error("Erro ao remarcar:", error);
-          alert("Erro de conexão. Tente novamente.");
+          alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
         }
       }
 
@@ -771,7 +776,7 @@ body {
       async function deletarAgendamento(id) {
         if (confirm("Tem certeza que deseja deletar este agendamento?")) {
           try {
-            const response = await fetch(`http://localhost:3000/api/agendamentos/${id}`, {
+            const response = await fetch(`${API_URL}/api/agendamentos/${id}`, {
               method: "DELETE",
               headers: { Authorization: token },
             });
@@ -779,12 +784,13 @@ body {
 
             if (result.success) {
               loadAgendamentos();
+              alert("Agendamento deletado com sucesso!");
             } else {
               alert(result.message || "Erro ao deletar agendamento.");
             }
           } catch (error) {
             console.error("Erro ao deletar:", error);
-            alert("Erro de conexão. Tente novamente.");
+            alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
           }
         }
       }
@@ -792,13 +798,14 @@ body {
       // Obter agendamentos por data
       async function getAgendamentosPorData(data) {
         try {
-          const response = await fetch(`http://localhost:3000/api/agendamentos?data=${data}`, {
+          const response = await fetch(`${API_URL}/api/agendamentos?data=${data}`, {
             headers: { Authorization: token },
           });
           const result = await response.json();
           return result.success ? result.data : [];
         } catch (error) {
           console.error("Erro ao obter agendamentos:", error);
+          alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
           return [];
         }
       }

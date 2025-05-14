@@ -113,7 +113,7 @@
         const senha = document.getElementById("senha").value;
 
         try {
-          const response = await fetch("http://localhost:3000/api/login", {
+          const response = await fetch(`${window.location.origin}/api/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ usuario, senha }),
@@ -124,11 +124,11 @@
             localStorage.setItem("token", result.token);
             window.location.href = "./admin.html";
           } else {
-            alert(result.message || "Credenciais inválidas");
+            alert(result.message || "Credenciais inválidas. Tente novamente.");
           }
         } catch (error) {
           console.error("Erro ao fazer login:", error);
-          alert("Erro de conexão. Tente novamente.");
+          alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
         }
       });
     </script>
