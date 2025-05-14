@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Corte & Estilo - Login</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background-image: url("https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80");
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+        position: relative;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        z-index: -1;
+      }
+      .login-container {
+        background-color: rgba(26, 26, 26, 0.95);
+        padding: 40px;
+        border-radius: 15px;
+        border: 1px solid #d4af37;
+        max-width: 400px;
+        width: 100%;
+        color: white;
+      }
+      .btn-gold {
+        background-color: #d4af37;
+        color: #1a1a1a;
+        font-weight: 600;
+        padding: 12px 30px;
+        border-radius: 50px;
+        border: none;
+        width: 100%;
+        transition: all 0.3s ease;
+      }
+      .btn-gold:hover {
+        background-color: #c9a227;
+        transform: translateY(-2px);
+      }
+      .form-control {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+      .form-control:focus {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-color: #d4af37;
+        box-shadow: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h3 class="text-center mb-4">Login do Administrador</h3>
+      <form id="loginForm">
+        <div class="mb-3">
+          <label for="usuario" class="form-label">Usuário</label>
+          <input
+            type="text"
+            class="form-control"
+            id="usuario"
+            placeholder="Digite o usuário"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="senha" class="form-label">Senha</label>
+          <input
+            type="password"
+            class="form-control"
+            id="senha"
+            placeholder="Digite a senha"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-gold">Entrar</button>
+      </form>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const usuario = document.getElementById("usuario").value;
+        const senha = document.getElementById("senha").value;
+
+        try {
+          const response = await fetch("http://localhost:3000/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ usuario, senha }),
+          });
+          const result = await response.json();
+
+          if (result.success) {
+            localStorage.setItem("token", result.token);
+            window.location.href = "./admin.html";
+          } else {
+            alert(result.message || "Credenciais inválidas");
+          }
+        } catch (error) {
+          console.error("Erro ao fazer login:", error);
+          alert("Erro de conexão. Tente novamente.");
+        }
+      });
+    </script>
+  </body>
+</html>
