@@ -2,12 +2,20 @@ const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Caminho para o banco de dados SQLite no disco persistente do Render
-const DB_PATH = '/opt/render/project/src/data/barbearia.db';
+const DB_DIR = '/opt/render/project/src/data';
+const DB_PATH = path.join(DB_DIR, 'barbearia.db');
+
+// Criar diretório do banco de dados se não existir
+if (!fs.existsSync(DB_DIR)) {
+  fs.mkdirSync(DB_DIR, { recursive: true });
+  console.log('Diretório de banco de dados criado:', DB_DIR);
+}
 
 // Inicializar banco de dados
 const db = new sqlite3.Database(DB_PATH, (err) => {
@@ -42,14 +50,31 @@ db.serialize(() => {
 });
 
 // Middleware
-app.use(cors()); // Permitir requisições de outros domínios
-app.use(express.json()); // Parsear JSON no corpo das requisições
-app.use(express.static(path.join(__dirname))); // Servir arquivos estáticos (index.html, admin.html, login.html)
-
-// Middleware para tratamento de erros
+app.use(cors({
+  origin: "https://corte-and-estilo.onrender.com",
+  methods: ["GET", "POST", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type"]
+}));
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
 app.use((err, req, res, next) => {
   console.error('Erro no servidor:', err.stack);
   res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+});
+
+// Health check
+app.get('/health', (req, res) => {
+  db.get('SELECT 1', (err) => {
+    if (err) {
+      console.error('Erro no health check:', err.message);
+      return res.status(500).json({ status: 'error', message: 'Database unavailable' });
+    }
+    res.json({ status: 'ok', message: 'Server and database running' });
+  });
 });
 
 // Rota de teste
@@ -61,8 +86,10 @@ app.get('/api/test', (req, res) => {
 // Rota de login
 app.post('/api/login', (req, res) => {
   const { usuario, senha } = req.body;
+  const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+  const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
   console.log('Tentativa de login:', { usuario });
-  if (usuario === 'admin' && senha === 'admin123') {
+  if (usuario === ADMIN_USER && senha === ADMIN_PASS) {
     res.json({ success: true, token: 'dummy-token' });
   } else {
     res.status(401).json({ success: false, message: 'Credenciais inválidas' });
@@ -183,16 +210,6 @@ app.patch('/api/agendamentos/:id/remarcar', (req, res) => {
 app.get('/', (req, res) => {
   console.log('Servindo index.html');
   res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.get('/admin.html', (req, res) => {
-  console.log('Servindo admin.html');
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
-app.get('/login.html', (req, res) => {
-  console.log('Servindo login.html');
-  res.sendFile(path.join(__dirname, 'login.html'));
 });
 
 // Iniciar servidor
