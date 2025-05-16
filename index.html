@@ -304,13 +304,16 @@
           font-size: 0.85rem;
           white-space: nowrap;
         }
+        .horarios-container {
+          grid-template-columns: repeat(2, 1fr);
+        }
       }
       @media (max-width: 480px) {
         .chatbot-input button {
           padding: 8px 12px !important;
         }
         .horarios-container {
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -570,10 +573,10 @@
 
     <!-- Modal de Horários -->
     <div class="modal fade" id="horariosModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark">
           <div class="modal-header border-secondary">
-            <h5 class="modal-title">
+            <h5 class="modal-title text-white">
               Horários disponíveis para <span id="modalDate"></span>
             </h5>
             <button
@@ -627,319 +630,343 @@
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
-    <script>
-      // Base URL para a API
-      const API_URL = window.location.origin;
+  <script>
+  // Base URL para a API
+  const API_URL = window.location.origin;
 
-      // Elementos do DOM
-      let chatbotMessages, chatbotInput, horariosModal, horariosContainer, modalDate;
+  // Elementos do DOM
+  let chatbotMessages, chatbotInput, horariosModal, horariosContainer, modalDate;
 
-      // Estado do agendamento
-      let currentStep = 0;
-      let bookingData = {};
-      let selectedDate = "";
+  // Estado do agendamento
+  let currentStep = 0;
+  let bookingData = {};
+  let selectedDate = "";
 
-      // Horários disponíveis
-      const horariosDisponiveis = [
-        "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-        "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
-      ];
+  // Horários disponíveis
+  const horariosDisponiveis = [
+    "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+    "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
+  ];
 
-      // Passos do chatbot (opção 3 removida)
-      const steps = [
-        {
-          message: "Olá! Bem-vindo ao agendamento da Corte & Estilo. O que deseja fazer? (Digite o número)\n1. Novo Agendamento\n2. Cancelar Agendamento",
-          field: "acao",
-          options: { 1: "Novo Agendamento", 2: "Cancelar Agendamento" },
-        },
-        {
-          message: "Digite o número de WhatsApp do agendamento que deseja cancelar (Ex: 11999999999):",
-          field: "telefone",
-          condition: (data) => data.acao === "Cancelar Agendamento",
-        },
-        {
-          message: "Qual é o seu nome completo?",
-          field: "nome",
-          condition: (data) => data.acao === "Novo Agendamento",
-        },
-        {
-          message: "Qual é o seu número de WhatsApp? (Ex: 11999999999)",
-          field: "telefone",
-          condition: (data) => data.acao === "Novo Agendamento",
-        },
-        {
-          message:
-            "Qual serviço você deseja agendar? (Digite o número)\n1. Corte Básico (R$40)\n2. Corte Premium (R$60)\n3. Barba Completa (R$35)\n4. Combo Corte + Barba (R$80)\n5. Hidratação (R$25)\n6. Pigmentação (R$50)",
-          field: "servico",
-          options: {
-            1: "Corte Básico", 2: "Corte Premium", 3: "Barba Completa",
-            4: "Combo Corte + Barba", 5: "Hidratação", 6: "Pigmentação",
+  // Passos do chatbot
+  const steps = [
+    {
+      message: "Olá! Bem-vindo ao agendamento da Corte & Estilo. O que deseja fazer? (Digite o número)\n1. Novo Agendamento\n2. Cancelar Agendamento",
+      field: "acao",
+      options: { 1: "Novo Agendamento", 2: "Cancelar Agendamento" },
+    },
+    {
+      message: "Digite o número de WhatsApp do agendamento que deseja cancelar (Ex: 11999999999):",
+      field: "telefone",
+      condition: (data) => data.acao === "Cancelar Agendamento",
+    },
+    {
+      message: "Qual é o seu nome completo?",
+      field: "nome",
+      condition: (data) => data.acao === "Novo Agendamento",
+    },
+    {
+      message: "Qual é o seu número de WhatsApp? (Ex: 11999999999)",
+      field: "telefone",
+      condition: (data) => data.acao === "Novo Agendamento",
+    },
+    {
+      message:
+        "Qual serviço você deseja agendar? (Digite o número)\n1. Corte Básico (R$40)\n2. Corte Premium (R$60)\n3. Barba Completa (R$35)\n4. Combo Corte + Barba (R$80)\n5. Hidratação (R$25)\n6. Pigmentação (R$50)",
+      field: "servico",
+      options: {
+        1: "Corte Básico", 2: "Corte Premium", 3: "Barba Completa",
+        4: "Combo Corte + Barba", 5: "Hidratação", 6: "Pigmentação",
+      },
+      condition: (data) => data.acao === "Novo Agendamento",
+    },
+    {
+      message: "Qual barbeiro você prefere? (Digite o número)\n1. Marcos\n2. Ricardo\n3. Carlos\n4. Qualquer um",
+      field: "barbeiro",
+      options: { 1: "Marcos", 2: "Ricardo", 3: "Carlos", 4: "Qualquer um" },
+      condition: (data) => data.acao === "Novo Agendamento",
+    },
+    {
+      message: "Por favor, selecione uma data para o agendamento (clique no campo abaixo):",
+      field: "data",
+      isDate: true,
+      condition: (data) => data.acao === "Novo Agendamento",
+    },
+    {
+      message: "Por favor, selecione um horário disponível:",
+      field: "horario",
+      isTime: true,
+      condition: (data) => data.acao === "Novo Agendamento",
+    },
+    {
+      message: "Alguma observação adicional? (Digite 'nenhuma' se não houver)",
+      field: "observacoes",
+      condition: (data) => data.acao === "Novo Agendamento",
+    },
+  ];
+
+  // Inicialização
+  document.addEventListener("DOMContentLoaded", () => {
+    chatbotMessages = document.getElementById("chatbotMessages");
+    chatbotInput = document.getElementById("chatbotInput");
+    horariosContainer = document.getElementById("horariosContainer");
+    modalDate = document.getElementById("modalDate");
+
+    // Verificar se o Bootstrap está carregado
+    if (typeof bootstrap === "undefined") {
+      console.error("Bootstrap não está carregado.");
+      alert("Erro ao carregar a página. Verifique sua conexão ou tente novamente.");
+      return;
+    }
+
+    try {
+      horariosModal = new bootstrap.Modal(document.getElementById("horariosModal"), {
+        backdrop: "static",
+        keyboard: false,
+      });
+    } catch (error) {
+      console.error("Erro ao inicializar o modal Bootstrap:", error);
+      alert("Erro ao carregar a página. Verifique sua conexão ou tente novamente.");
+      return;
+    }
+
+    addMessage(steps[0].message);
+  });
+
+  // Adicionar mensagem ao chat
+  function addMessage(message, type = "bot") {
+    const msgDiv = document.createElement("div");
+    msgDiv.className = `chatbot-message ${type}`;
+
+    if (type === "bot" && steps[currentStep]?.isDate) {
+      msgDiv.innerHTML = `${message}<br><br>
+        <input type="text" id="datePicker" class="form-control" placeholder="Selecione uma data" readonly>`;
+      chatbotMessages.appendChild(msgDiv);
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+      try {
+        flatpickr("#datePicker", {
+          locale: "pt",
+          minDate: "today",
+          dateFormat: "d/m/Y",
+          onChange: function (selectedDates, dateStr) {
+            selectedDate = dateStr;
+            bookingData.data = dateStr;
+            currentStep++;
+            showTimeSelection(dateStr);
           },
-          condition: (data) => data.acao === "Novo Agendamento",
-        },
-        {
-          message: "Qual barbeiro você prefere? (Digite o número)\n1. Marcos\n2. Ricardo\n3. Carlos\n4. Qualquer um",
-          field: "barbeiro",
-          options: { 1: "Marcos", 2: "Ricardo", 3: "Carlos", 4: "Qualquer um" },
-          condition: (data) => data.acao === "Novo Agendamento",
-        },
-        {
-          message: "Por favor, selecione uma data para o agendamento (clique no campo abaixo):",
-          field: "data",
-          isDate: true,
-          condition: (data) => data.acao === "Novo Agendamento",
-        },
-        {
-          message: "Por favor, selecione um horário disponível:",
-          field: "horario",
-          isTime: true,
-          condition: (data) => data.acao === "Novo Agendamento",
-        },
-        {
-          message: "Alguma observação adicional? (Digite 'nenhuma' se não houver)",
-          field: "observacoes",
-          condition: (data) => data.acao === "Novo Agendamento",
-        },
-      ];
+        });
+      } catch (error) {
+        console.error("Erro ao inicializar Flatpickr:", error);
+        addMessage("Erro ao carregar o seletor de data. Tente novamente.");
+      }
+    } else {
+      msgDiv.textContent = message;
+      chatbotMessages.appendChild(msgDiv);
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+  }
 
-      // Inicialização
-      document.addEventListener("DOMContentLoaded", () => {
-        chatbotMessages = document.getElementById("chatbotMessages");
-        chatbotInput = document.getElementById("chatbotInput");
-        horariosContainer = document.getElementById("horariosContainer");
-        modalDate = document.getElementById("modalDate");
+  // Mostrar seleção de horários
+  async function showTimeSelection(date) {
+    try {
+      modalDate.textContent = date;
+      horariosContainer.innerHTML = "";
 
-        try {
-          horariosModal = new bootstrap.Modal(document.getElementById("horariosModal"), {
-            backdrop: "static",
-            keyboard: false,
+      // Mock de agendamentos reservados (substituir pela chamada real à API)
+      let reservados = [];
+      try {
+        reservados = await getAgendamentosPorData(formatDateForAPI(date));
+      } catch (apiError) {
+        console.error("Erro ao consultar API:", apiError);
+        addMessage("Erro ao carregar horários. Tente novamente.");
+        return;
+      }
+
+      horariosDisponiveis.forEach((horario) => {
+        const btn = document.createElement("button");
+        btn.className = "horario-btn";
+        btn.textContent = horario;
+
+        const estaReservado = reservados.some((ag) => ag.horario === horario);
+        if (estaReservado) {
+          btn.classList.add("reservado");
+          btn.disabled = true;
+          btn.title = "Horário já reservado";
+        } else {
+          btn.addEventListener("click", () => {
+            bookingData.horario = horario;
+            addMessage(`Horário selecionado: ${horario}`);
+            try {
+              horariosModal.hide();
+            } catch (error) {
+              console.error("Erro ao fechar modal:", error);
+            }
+            currentStep++;
+            if (currentStep < steps.length && steps[currentStep].condition(bookingData)) {
+              addMessage(steps[currentStep].message);
+            }
           });
-        } catch (error) {
-          console.error("Erro ao inicializar o modal Bootstrap:", error);
-          alert("Erro ao carregar a página. Verifique sua conexão ou tente novamente.");
-          return;
         }
 
-        addMessage(steps[0].message);
+        horariosContainer.appendChild(btn);
       });
 
-      // Adicionar mensagem ao chat
-      function addMessage(message, type = "bot") {
-        const msgDiv = document.createElement("div");
-        msgDiv.className = `chatbot-message ${type}`;
-
-        if (type === "bot" && steps[currentStep]?.isDate) {
-          msgDiv.innerHTML = `${message}<br><br>
-            <input type="text" id="datePicker" class="form-control" placeholder="Selecione uma data" readonly>`;
-          chatbotMessages.appendChild(msgDiv);
-          chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-
-          try {
-            flatpickr("#datePicker", {
-              locale: "pt",
-              minDate: "today",
-              dateFormat: "d/m/Y",
-              onChange: function (selectedDates, dateStr) {
-                selectedDate = dateStr;
-                bookingData.data = dateStr;
-                currentStep++;
-                showTimeSelection(dateStr);
-              },
-            });
-          } catch (error) {
-            console.error("Erro ao inicializar Flatpickr:", error);
-            addMessage("Erro ao carregar o seletor de data. Tente novamente.");
-          }
-        } else {
-          msgDiv.textContent = message;
-          chatbotMessages.appendChild(msgDiv);
-          chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-        }
+      try {
+        horariosModal.show();
+      } catch (error) {
+        console.error("Erro ao abrir modal:", error);
+        addMessage("Erro ao abrir a seleção de horários. Tente novamente.");
       }
+    } catch (error) {
+      console.error("Erro em showTimeSelection:", error);
+      addMessage("Erro ao carregar horários. Verifique sua conexão e tente novamente.");
+    }
+  }
 
-      // Mostrar seleção de horários
-      async function showTimeSelection(date) {
-        try {
-          modalDate.textContent = date;
-          horariosContainer.innerHTML = "";
+  // Enviar mensagem do usuário
+  async function sendMessage() {
+    const userInput = chatbotInput.value.trim();
+    if (!userInput) return;
 
-          let reservados = await getAgendamentosPorData(formatDateForAPI(date));
+    addMessage(userInput, "user");
+    chatbotInput.value = "";
 
-          horariosDisponiveis.forEach((horario) => {
-            const btn = document.createElement("button");
-            btn.className = "horario-btn";
-            btn.textContent = horario;
+    if (currentStep >= steps.length) return;
 
-            const estaReservado = reservados.some((ag) => ag.horario === horario);
-            if (estaReservado) {
-              btn.classList.add("reservado");
-              btn.disabled = true;
-              btn.title = "Horário já reservado";
-            } else {
-              btn.addEventListener("click", () => {
-                bookingData.horario = horario;
-                horariosModal.hide();
-                addMessage(`Horário selecionado: ${horario}`);
-                currentStep++;
-                if (currentStep < steps.length && steps[currentStep].condition(bookingData)) {
-                  addMessage(steps[currentStep].message);
-                }
-              });
-            }
+    const step = steps[currentStep];
 
-            horariosContainer.appendChild(btn);
-          });
+    if (step.options && step.options[userInput]) {
+      bookingData[step.field] = step.options[userInput];
+    } else {
+      bookingData[step.field] = userInput;
+    }
 
-          horariosModal.show();
-        } catch (error) {
-          console.error("Erro em showTimeSelection:", error);
-          addMessage("Erro ao carregar horários. Verifique sua conexão e tente novamente.");
-        }
-      }
-
-      // Enviar mensagem do usuário
-      async function sendMessage() {
-        const userInput = chatbotInput.value.trim();
-        if (!userInput) return;
-
-        addMessage(userInput, "user");
-        chatbotInput.value = "";
-
-        if (currentStep >= steps.length) return;
-
-        const step = steps[currentStep];
-
-        if (step.options && step.options[userInput]) {
-          bookingData[step.field] = step.options[userInput];
-        } else {
-          bookingData[step.field] = userInput;
-        }
-
-        if (bookingData.acao === "Cancelar Agendamento" && step.field === "telefone") {
-          try {
-            const agendamento = await getAgendamentoPorTelefone(userInput);
-            if (agendamento) {
-              addMessage(`Agendamento encontrado: ${agendamento.nome} (${agendamento.telefone}). Cancelando...`);
-              const success = await deleteAgendamentoPorTelefone(userInput);
-              if (success) {
-                addMessage("Agendamento cancelado com sucesso!");
-                setTimeout(() => {
-                  resetChatbot();
-                }, 3000);
-              } else {
-                addMessage("Erro ao cancelar. Verifique sua conexão e tente novamente.");
-                resetChatbot();
-              }
-            } else {
-              addMessage("Nenhum agendamento encontrado com esse número. Tente novamente.");
-              currentStep--;
-              return;
-            }
-          } catch (error) {
-            console.error("Erro ao processar cancelamento:", error);
-            addMessage("Erro de conexão ao cancelar agendamento. Tente novamente.");
+    if (bookingData.acao === "Cancelar Agendamento" && step.field === "telefone") {
+      try {
+        const agendamento = await getAgendamentoPorTelefone(userInput);
+        if (agendamento) {
+          addMessage(`Agendamento encontrado: ${agendamento.nome} (${agendamento.telefone}). Cancelando...`);
+          const success = await deleteAgendamentoPorTelefone(userInput);
+          if (success) {
+            addMessage("Agendamento cancelado com sucesso!");
+            setTimeout(() => {
+              resetChatbot();
+            }, 3000);
+          } else {
+            addMessage("Erro ao cancelar. Verifique sua conexão e tente novamente.");
             resetChatbot();
           }
         } else {
-          currentStep++;
+          addMessage("Nenhum agendamento encontrado com esse número. Tente novamente.");
+          currentStep--;
+          return;
         }
-
-        if (currentStep >= steps.length || (bookingData.acao === "Novo Agendamento" && step.field === "observacoes")) {
-          await saveAgendamento();
-        } else if (steps[currentStep]?.condition(bookingData)) {
-          setTimeout(() => addMessage(steps[currentStep].message), 500);
-        } else {
-          currentStep++;
-          if (currentStep < steps.length && steps[currentStep]?.condition(bookingData)) {
-            addMessage(steps[currentStep].message);
-          }
-        }
+      } catch (error) {
+        console.error("Erro ao processar cancelamento:", error);
+        addMessage("Erro de conexão ao cancelar agendamento. Tente novamente.");
+        resetChatbot();
       }
+    } else {
+      currentStep++;
+    }
 
-      // Formatar data para a API (DD/MM/YYYY → YYYY-MM-DD)
-      function formatDateForAPI(dateStr) {
-        const [day, month, year] = dateStr.split("/");
-        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    if (currentStep >= steps.length || (bookingData.acao === "Novo Agendamento" && step.field === "observacoes")) {
+      await saveAgendamento();
+    } else if (steps[currentStep]?.condition(bookingData)) {
+      setTimeout(() => addMessage(steps[currentStep].message), 500);
+    } else {
+      currentStep++;
+      if (currentStep < steps.length && steps[currentStep]?.condition(bookingData)) {
+        addMessage(steps[currentStep].message);
       }
+    }
+  }
 
-      // Salvar agendamento
-      async function saveAgendamento() {
-        try {
-          bookingData.data = formatDateForAPI(bookingData.data);
+  // Formatar data para a API (DD/MM/YYYY → YYYY-MM-DD)
+  function formatDateForAPI(dateStr) {
+    const [day, month, year] = dateStr.split("/");
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
 
-          const response = await fetch(`${API_URL}/api/agendamentos`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(bookingData),
-          });
-          const data = await response.json();
+  // Salvar agendamento
+  async function saveAgendamento() {
+    try {
+      bookingData.data = formatDateForAPI(bookingData.data);
 
-          if (data.success) {
-            addMessage("Agendamento realizado com sucesso! Entraremos em contato para confirmar.");
-          } else {
-            addMessage(`Erro ao agendar: ${data.message || "Tente novamente."}`);
-          }
-
-          resetChatbot();
-        } catch (error) {
-          console.error("Erro ao salvar agendamento:", error);
-          addMessage("Erro de conexão com o servidor. Tente novamente mais tarde.");
-        }
-      }
-
-      // Obter agendamento por telefone
-      async function getAgendamentoPorTelefone(telefone) {
-        try {
-          const response = await fetch(`${API_URL}/api/agendamentos/telefone/${telefone}`);
-          const result = await response.json();
-          return result.success ? result.data : null;
-        } catch (error) {
-          console.error("Erro ao obter agendamento:", error);
-          addMessage("Erro de conexão ao buscar agendamento. Tente novamente.");
-          return null;
-        }
-      }
-
-      // Deletar agendamento por telefone
-      async function deleteAgendamentoPorTelefone(telefone) {
-        try {
-          const response = await fetch(`${API_URL}/api/agendamentos/telefone/${telefone}`, {
-            method: "DELETE",
-          });
-          const result = await response.json();
-          return result.success;
-        } catch (error) {
-          console.error("Erro ao deletar:", error);
-          addMessage("Erro de conexão ao cancelar agendamento. Tente novamente.");
-          return false;
-        }
-      }
-
-      // Obter agendamentos por data
-      async function getAgendamentosPorData(data) {
-        try {
-          const response = await fetch(`${API_URL}/api/agendamentos?data=${data}`);
-          const result = await response.json();
-          return result.success ? result.data : [];
-        } catch (error) {
-          console.error("Erro ao obter agendamentos:", error);
-          addMessage("Erro de conexão ao carregar horários. Tente novamente.");
-          return [];
-        }
-      }
-
-      // Resetar chatbot
-      function resetChatbot() {
-        currentStep = 0;
-        bookingData = {};
-        chatbotMessages.innerHTML = "";
-        setTimeout(() => addMessage(steps[0].message), 1000);
-      }
-
-      // Permitir enviar com Enter
-      chatbotInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendMessage();
+      const response = await fetch(`${API_URL}/api/agendamentos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData),
       });
-    </script>
+      const result = await response.json();
+
+      if (result.success) {
+        addMessage("Agendamento realizado com sucesso! Entraremos em contato para confirmar.");
+      } else {
+        addMessage(`Erro ao agendar: ${result.message || "Tente novamente."}`);
+      }
+
+      resetChatbot();
+    } catch (error) {
+      console.error("Erro ao salvar agendamento:", error);
+      addMessage("Erro de conexão com o servidor. Tente novamente mais tarde.");
+    }
+  }
+
+  // Obter agendamento por telefone
+  async function getAgendamentoPorTelefone(telefone) {
+    try {
+      const response = await fetch(`${API_URL}/api/agendamentos/telefone/${telefone}`);
+      const result = await response.json();
+      return result.success ? result.data : null;
+    } catch (error) {
+      console.error("Erro ao obter agendamento:", error);
+      addMessage("Erro de conexão ao buscar agendamento. Tente novamente.");
+      return null;
+    }
+  }
+
+  // Deletar agendamento por telefone
+  async function deleteAgendamentoPorTelefone(telefone) {
+    try {
+      const response = await fetch(`${API_URL}/api/agendamentos/telefone/${telefone}`, {
+        method: "DELETE",
+      });
+      const result = await response.json();
+      return result.success;
+    } catch (error) {
+      console.error("Erro ao deletar:", error);
+      addMessage("Erro de conexão ao cancelar agendamento. Tente novamente.");
+      return false;
+    }
+  }
+
+  // Obter agendamentos por data
+  async function getAgendamentosPorData(data) {
+    try {
+      const response = await fetch(`${API_URL}/api/agendamentos?data=${data}`);
+      const result = await response.json();
+      return result.success ? result.data : [];
+    } catch (error) {
+      console.error("Erro ao obter agendamentos:", error);
+      addMessage("Erro de conexão ao carregar horários. Tente novamente.");
+      return [];
+    }
+  }
+
+  // Resetar chatbot
+  function resetChatbot() {
+    currentStep = 0;
+    bookingData = {};
+    chatbotMessages.innerHTML = "";
+    setTimeout(() => addMessage(steps[0].message), 1000);
+  }
+
+  // Permitir enviar com Enter
+  chatbotInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+</script>
   </body>
 </html>
