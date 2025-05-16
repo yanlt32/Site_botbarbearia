@@ -20,6 +20,11 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
+    <!-- SweetAlert2 CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
     <style>
       :root {
         --primary: #0a0a0a; /* Preto profundo */
@@ -183,6 +188,17 @@
 
       .btn-delete:hover {
         background-color: #9b2c2c;
+        transform: translateY(-1px);
+      }
+
+      .btn-whatsapp {
+        background-color: #25D366;
+        color: var(--light);
+        border: none;
+      }
+
+      .btn-whatsapp:hover {
+        background-color: #1ebe57;
         transform: translateY(-1px);
       }
 
@@ -432,6 +448,8 @@
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
     ></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
       // Base URL para a API
       const API_URL = window.location.origin;
@@ -441,6 +459,10 @@
 
       // Estado
       const token = localStorage.getItem("token");
+      let lastAgendamentos = []; // Armazena a última lista de agendamentos
+      const notificationSound = new Audio(
+        "https://www.soundjay.com/buttons/beep-01a.mp3"
+      ); // URL do som de notificação
 
       // Inicialização
       document.addEventListener("DOMContentLoaded", () => {
@@ -452,12 +474,25 @@
 
         // Verificar autenticação
         if (!token) {
-          alert("Você precisa estar logado para acessar o painel.");
-          window.location.href = "/";
+          Swal.fire({
+            title: "Acesso Negado",
+            text: "Você precisa estar logado para acessar o painel.",
+            icon: "error",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#d4a017",
+            background: "#0a0a0a",
+            color: "#e5e5e5",
+          }).then(() => {
+            window.location.href = "/";
+          });
           return;
         }
 
+        // Carregar agendamentos iniciais
         loadAgendamentos();
+
+        // Verificar novos agendamentos a cada 30 segundos
+        setInterval(checkNewAgendamentos, 30000);
       });
 
       // Carregar agendamentos
@@ -475,14 +510,83 @@
 
           if (data.success) {
             renderAgendamentos(data.data);
+            lastAgendamentos = data.data; // Atualiza a lista de agendamentos
           } else {
             renderAgendamentos([]);
-            alert(data.message || "Erro ao carregar agendamentos.");
+            Swal.fire({
+              title: "Erro",
+              text: data.message || "Erro ao carregar agendamentos.",
+              icon: "error",
+              confirmButtonText: "Ok",
+              confirmButtonColor: "#d4a017",
+              background: "#0a0a0a",
+              color: "#e5e5e5",
+            });
           }
         } catch (error) {
           console.error("Erro ao carregar agendamentos:", error);
           renderAgendamentos([]);
-          alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
+          Swal.fire({
+            title: "Erro de Conexão",
+            text: "Erro de conexão com o servidor. Verifique sua conexão e tente novamente.",
+            icon: "error",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#d4a017",
+            background: "#0a0a0a",
+            color: "#e5e5e5",
+          });
+        }
+      }
+
+      // Verificar novos agendamentos
+      async function checkNewAgendamentos() {
+        try {
+          let url = `${API_URL}/api/agendamentos`;
+          if (filterDate.value) {
+            url += `?data=${filterDate.value}`;
+          }
+
+          const response = await fetch(url, {
+            headers: { Authorization: token },
+          });
+          const data = await response.json();
+
+          if (data.success) {
+            const novosAgendamentos = data.data.filter(
+              (ag) => !lastAgendamentos.some((last) => last.id === ag.id)
+            );
+
+            if (novosAgendamentos.length > 0) {
+              novosAgendamentos.forEach((ag) => {
+                Swal.fire({
+                  title: "Novo Agendamento!",
+                  html: `
+                    <p><strong>Nome:</strong> ${ag.nome}</p>
+                    <p><strong>Serviço:</strong> ${ag.servico}</p>
+                    <p><strong>Barbeiro:</strong> ${ag.barbeiro}</p>
+                    <p><strong>Data:</strong> ${ag.data ? new Date(ag.data).toLocaleDateString("pt-BR") : "-"}</p>
+                    <p><strong>Horário:</strong> ${ag.horario}</p>
+                    <p><strong>Telefone:</strong> ${ag.telefone}</p>
+                  `,
+                  icon: "info",
+                  confirmButtonText: "Ok",
+                  confirmButtonColor: "#d4a017",
+                  background: "#0a0a0a",
+                  color: "#e5e5e5",
+                });
+
+                // Tocar som de notificação
+                notificationSound.play().catch((error) => {
+                  console.error("Erro ao tocar som de notificação:", error);
+                });
+              });
+
+              renderAgendamentos(data.data);
+              lastAgendamentos = data.data; // Atualiza a lista de agendamentos
+            }
+          }
+        } catch (error) {
+          console.error("Erro ao verificar novos agendamentos:", error);
         }
       }
 
@@ -504,6 +608,7 @@
 
         agendamentos.forEach((ag) => {
           const row = document.createElement("tr");
+          const telefoneLimpo = ag.telefone.replace(/\D/g, ""); // Remove caracteres não numéricos
           row.innerHTML = `
             <td data-label="ID">${ag.id || "-"}</td>
             <td data-label="Nome">${ag.nome || "-"}</td>
@@ -519,6 +624,7 @@
                 ag.status === "Confirmado" ? "disabled" : ""
               }>Confirmar</button>
               <button class="action-btn btn-delete" onclick="deletarAgendamento(${ag.id})">Deletar</button>
+              <button class="action-btn btn-whatsapp" onclick="abrirWhatsApp('${telefoneLimpo}', '${ag.nome}')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
             </td>
           `;
           agendamentosTable.appendChild(row);
@@ -536,19 +642,56 @@
 
           if (result.success) {
             loadAgendamentos();
-            alert("Agendamento confirmado com sucesso!");
+            Swal.fire({
+              title: "Sucesso",
+              text: "Agendamento confirmado com sucesso!",
+              icon: "success",
+              confirmButtonText: "Ok",
+              confirmButtonColor: "#d4a017",
+              background: "#0a0a0a",
+              color: "#e5e5e5",
+            });
           } else {
-            alert(result.message || "Erro ao confirmar agendamento.");
+            Swal.fire({
+              title: "Erro",
+              text: result.message || "Erro ao confirmar agendamento.",
+              icon: "error",
+              confirmButtonText: "Ok",
+              confirmButtonColor: "#d4a017",
+              background: "#0a0a0a",
+              color: "#e5e5e5",
+            });
           }
         } catch (error) {
           console.error("Erro ao confirmar:", error);
-          alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
+          Swal.fire({
+            title: "Erro de Conexão",
+            text: "Erro de conexão com o servidor. Verifique sua conexão e tente novamente.",
+            icon: "error",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#d4a017",
+            background: "#0a0a0a",
+            color: "#e5e5e5",
+          });
         }
       }
 
       // Deletar agendamento
       async function deletarAgendamento(id) {
-        if (confirm("Tem certeza que deseja deletar este agendamento?")) {
+        const result = await Swal.fire({
+          title: "Confirmar Exclusão",
+          text: "Tem certeza que deseja deletar este agendamento?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Deletar",
+          cancelButtonText: "Cancelar",
+          confirmButtonColor: "#c53030",
+          cancelButtonColor: "#6c757d",
+          background: "#0a0a0a",
+          color: "#e5e5e5",
+        });
+
+        if (result.isConfirmed) {
           try {
             const response = await fetch(`${API_URL}/api/agendamentos/${id}`, {
               method: "DELETE",
@@ -558,15 +701,46 @@
 
             if (result.success) {
               loadAgendamentos();
-              alert("Agendamento deletado com sucesso!");
+              Swal.fire({
+                title: "Deletado",
+                text: "Agendamento deletado com sucesso!",
+                icon: "success",
+                confirmButtonText: "Ok",
+                confirmButtonColor: "#d4a017",
+                background: "#0a0a0a",
+                color: "#e5e5e5",
+              });
             } else {
-              alert(result.message || "Erro ao deletar agendamento.");
+              Swal.fire({
+                title: "Erro",
+                text: result.message || "Erro ao deletar agendamento.",
+                icon: "error",
+                confirmButtonText: "Ok",
+                confirmButtonColor: "#d4a017",
+                background: "#0a0a0a",
+                color: "#e5e5e5",
+              });
             }
           } catch (error) {
             console.error("Erro ao deletar:", error);
-            alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
+            Swal.fire({
+              title: "Erro de Conexão",
+              text: "Erro de conexão com o servidor. Verifique sua conexão e tente novamente.",
+              icon: "error",
+              confirmButtonText: "Ok",
+              confirmButtonColor: "#d4a017",
+              background: "#0a0a0a",
+              color: "#e5e5e5",
+            });
           }
         }
+      }
+
+      // Abrir WhatsApp
+      function abrirWhatsApp(telefone, nome) {
+        const mensagem = encodeURIComponent(`Olá, ${nome}, sobre seu agendamento na Corte & Estilo...`);
+        const url = `https://api.whatsapp.com/send?phone=+55${telefone}&text=${mensagem}`;
+        window.open(url, "_blank");
       }
 
       // Logout
