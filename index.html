@@ -833,7 +833,7 @@
 
           horariosDisponiveis.forEach((horario) => {
             const btn = document.createElement("button");
-            btn className = "horario-btn";
+            btn.className = "horario-btn";
             btn.textContent = horario;
 
             const estaReservado = reservados.some((ag) => ag.horario === horario);
