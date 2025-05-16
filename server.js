@@ -1,52 +1,45 @@
 const express = require('express');
 const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Caminho para o banco de dados SQLite no disco persistente do Render
-const DB_DIR = '/opt/render/project/src/data';
-const DB_PATH = path.join(DB_DIR, 'barbearia.db');
+// Configuração do PostgreSQL usando a variável de ambiente fornecida pelo Render
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL, // Render fornece isso automaticamente
+  ssl: { rejectUnauthorized: false }, // Necessário para conexões no Render
+});
 
-// Criar diretório do banco de dados se não existir
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
-  console.log('Diretório de banco de dados criado:', DB_DIR);
-}
-
-// Inicializar banco de dados
-const db = new sqlite3.Database(DB_PATH, (err) => {
+// Testar conexão com o banco
+pool.connect((err) => {
   if (err) {
-    console.error('Erro ao abrir banco:', err.message);
+    console.error('Erro ao conectar ao PostgreSQL:', err.message);
   } else {
-    console.log('Banco de dados conectado/criado com sucesso em', DB_PATH);
+    console.log('Conectado ao PostgreSQL com sucesso');
   }
 });
 
 // Criar tabela de agendamentos, se não existir
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS agendamentos (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT,
-      telefone TEXT,
-      servico TEXT,
-      barbeiro TEXT,
-      data TEXT,
-      horario TEXT,
-      observacoes TEXT,
-      status TEXT DEFAULT 'Pendente'
-    )
-  `, (err) => {
-    if (err) {
-      console.error('Erro ao criar tabela agendamentos:', err.message);
-    } else {
-      console.log('Tabela agendamentos criada ou já existente.');
-    }
-  });
+pool.query(`
+  CREATE TABLE IF NOT EXISTS agendamentos (
+    id SERIAL PRIMARY KEY,
+    nome TEXT,
+    telefone TEXT,
+    servico TEXT,
+    barbeiro TEXT,
+    data TEXT,
+    horario TEXT,
+    observacoes TEXT,
+    status TEXT DEFAULT 'Pendente'
+  )
+`, (err) => {
+  if (err) {
+    console.error('Erro ao criar tabela agendamentos:', err.message);
+  } else {
+    console.log('Tabela agendamentos criada ou já existente.');
+  }
 });
 
 // Middleware
@@ -67,14 +60,14 @@ app.use((err, req, res, next) => {
 });
 
 // Health check
-app.get('/health', (req, res) => {
-  db.get('SELECT 1', (err) => {
-    if (err) {
-      console.error('Erro no health check:', err.message);
-      return res.status(500).json({ status: 'error', message: 'Database unavailable' });
-    }
+app.get('/health', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
     res.json({ status: 'ok', message: 'Server and database running' });
-  });
+  } catch (err) {
+    console.error('Erro no health check:', err.message);
+    res.status(500).json({ status: 'error', message: 'Database unavailable' });
+  }
 });
 
 // Rota de teste
@@ -97,113 +90,124 @@ app.post('/api/login', (req, res) => {
 });
 
 // Salvar agendamento
-app.post('/api/agendamentos', (req, res) => {
+app.post('/api/agendamentos', async (req, res) => {
   const { nome, telefone, servico, barbeiro, data, horario, observacoes } = req.body;
   console.log('Salvando agendamento:', { nome, telefone, servico, barbeiro, data, horario });
-  db.run(
-    `INSERT INTO agendamentos (nome, telefone, servico, barbeiro, data, horario, observacoes, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [nome, telefone, servico, barbeiro, data, horario, observacoes || null, 'Pendente'],
-    function (err) {
-      if (err) {
-        console.error('Erro ao salvar agendamento:', err.message);
-        return res.status(500).json({ success: false, message: 'Erro ao salvar agendamento' });
-      }
-      res.json({ success: true, data: { id: this.lastID, ...req.body, status: 'Pendente' } });
-    }
-  );
+  try {
+    const result = await pool.query(
+      `INSERT INTO agendamentos (nome, telefone, servico, barbeiro, data, horario, observacoes, status) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [nome, telefone, servico, barbeiro, data, horario, observacoes || null, 'Pendente']
+    );
+    res.json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    console.error('Erro ao salvar agendamento:', err.message);
+    res.status(500).json({ success: false, message: 'Erro ao salvar agendamento' });
+  }
 });
 
 // Buscar agendamentos
-app.get('/api/agendamentos', (req, res) => {
+app.get('/api/agendamentos', async (req, res) => {
   const { data } = req.query;
   let query = 'SELECT * FROM agendamentos';
   let params = [];
   if (data) {
-    query += ' WHERE date(data) = ?';
+    query += ' WHERE date(data) = $1';
     params.push(data);
   }
   console.log('Buscando agendamentos:', { data });
-  db.all(query, params, (err, rows) => {
-    if (err) {
-      console.error('Erro ao buscar agendamentos:', err.message);
-      return res.status(500).json({ success: false, message: 'Erro ao buscar agendamentos' });
-    }
-    res.json({ success: true, data: rows });
-  });
+  try {
+    const result = await pool.query(query, params);
+    res.json({ success: true, data: result.rows });
+  } catch (err) {
+    console.error('Erro ao buscar agendamentos:', err.message);
+    res.status(500).json({ success: false, message: 'Erro ao buscar agendamentos' });
+  }
 });
 
 // Buscar por telefone
-app.get('/api/agendamentos/telefone/:telefone', (req, res) => {
+app.get('/api/agendamentos/telefone/:telefone', async (req, res) => {
   const telefone = req.params.telefone;
   console.log('Buscando agendamento por telefone:', telefone);
-  db.get(`SELECT * FROM agendamentos WHERE telefone = ?`, [telefone], (err, row) => {
-    if (err) {
-      console.error('Erro ao buscar por telefone:', err.message);
-      return res.status(500).json({ success: false, message: 'Erro ao buscar agendamento' });
-    }
-    if (row) {
-      res.json({ success: true, data: row });
+  try {
+    const result = await pool.query(`SELECT * FROM agendamentos WHERE telefone = $1`, [telefone]);
+    if (result.rows.length > 0) {
+      res.json({ success: true, data: result.rows[0] });
     } else {
       res.json({ success: false, message: 'Agendamento não encontrado' });
     }
-  });
+  } catch (err) {
+    console.error('Erro ao buscar por telefone:', err.message);
+    res.status(500).json({ success: false, message: 'Erro ao buscar agendamento' });
+  }
 });
 
 // Confirmar agendamento
-app.patch('/api/agendamentos/:id/confirmar', (req, res) => {
+app.patch('/api/agendamentos/:id/confirmar', async (req, res) => {
   const id = req.params.id;
   console.log('Confirmando agendamento ID:', id);
-  db.run(`UPDATE agendamentos SET status = 'Confirmado' WHERE id = ?`, [id], function (err) {
-    if (err || this.changes === 0) {
-      console.error('Erro ao confirmar agendamento:', err ? err.message : 'ID não encontrado');
+  try {
+    const result = await pool.query(`UPDATE agendamentos SET status = 'Confirmado' WHERE id = $1 RETURNING *`, [id]);
+    if (result.rowCount === 0) {
       return res.status(404).json({ success: false, message: 'Agendamento não encontrado' });
     }
     res.json({ success: true });
-  });
+  } catch (err) {
+    console.error('Erro ao confirmar agendamento:', err.message);
+    res.status(404).json({ success: false, message: 'Erro ao confirmar agendamento' });
+  }
 });
 
 // Deletar agendamento
-app.delete('/api/agendamentos/:id', (req, res) => {
+app.delete('/api/agendamentos/:id', async (req, res) => {
   const id = req.params.id;
   console.log('Deletando agendamento ID:', id);
-  db.run(`DELETE FROM agendamentos WHERE id = ?`, [id], function (err) {
-    if (err || this.changes === 0) {
-      console.error('Erro ao deletar agendamento:', err ? err.message : 'ID não encontrado');
+  try {
+    const result = await pool.query(`DELETE FROM agendamentos WHERE id = $1 RETURNING *`, [id]);
+    if (result.rowCount === 0) {
       return res.status(404).json({ success: false, message: 'Agendamento não encontrado' });
     }
     res.json({ success: true });
-  });
+  } catch (err) {
+    console.error('Erro ao deletar agendamento:', err.message);
+    res.status(404).json({ success: false, message: 'Erro ao deletar agendamento' });
+  }
 });
 
 // Deletar por telefone
-app.delete('/api/agendamentos/telefone/:telefone', (req, res) => {
+app.delete('/api/agendamentos/telefone/:telefone', async (req, res) => {
   const telefone = req.params.telefone;
   console.log('Deletando agendamento por telefone:', telefone);
-  db.run(`DELETE FROM agendamentos WHERE telefone = ?`, [telefone], function (err) {
-    if (err || this.changes === 0) {
-      console.error('Erro ao deletar por telefone:', err ? err.message : 'Telefone não encontrado');
+  try {
+    const result = await pool.query(`DELETE FROM agendamentos WHERE telefone = $1 RETURNING *`, [telefone]);
+    if (result.rowCount === 0) {
       return res.status(404).json({ success: false, message: 'Agendamento não encontrado' });
     }
     res.json({ success: true });
-  });
+  } catch (err) {
+    console.error('Erro ao deletar por telefone:', err.message);
+    res.status(404).json({ success: false, message: 'Erro ao deletar agendamento' });
+  }
 });
 
 // Remarcar agendamento
-app.patch('/api/agendamentos/:id/remarcar', (req, res) => {
+app.patch('/api/agendamentos/:id/remarcar', async (req, res) => {
   const id = req.params.id;
   const { data, horario } = req.body;
   console.log('Remarcando agendamento ID:', id, { data, horario });
-  db.run(
-    `UPDATE agendamentos SET data = ?, horario = ? WHERE id = ?`,
-    [data, horario, id],
-    function (err) {
-      if (err || this.changes === 0) {
-        console.error('Erro ao remarcar agendamento:', err ? err.message : 'ID não encontrado');
-        return res.status(404).json({ success: false, message: 'Agendamento não encontrado' });
-      }
-      res.json({ success: true });
+  try {
+    const result = await pool.query(
+      `UPDATE agendamentos SET data = $1, horario = $2 WHERE id = $3 RETURNING *`,
+      [data, horario, id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ success: false, message: 'Agendamento não encontrado' });
     }
-  );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Erro ao remarcar agendamento:', err.message);
+    res.status(404).json({ success: false, message: 'Erro ao remarcar agendamento' });
+  }
 });
 
 // Rotas HTML

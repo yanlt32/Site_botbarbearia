@@ -240,7 +240,7 @@
       .horario-btn:hover {
         background: rgba(212, 175, 55, 0.3);
       }
-      .horario-btn.reservado {
+      .hor testimonio-btn.reservado {
         background: rgba(255, 0, 0, 0.2);
         border-color: #ff0000;
         cursor: not-allowed;
@@ -664,7 +664,7 @@
           options: { 1: "Novo Agendamento", 2: "Cancelar Agendamento", 3: "Remarcar Agendamento" },
         },
         {
-          message: "Para remarcar seu agendamento, você precisará cancelar seu corte e agendar um novamente. Clique em 'Reiniciar Chatbot'.",
+          message: "Para remarcar seu agendamento, você precisará cancelar seu corte e agendar um novamente, clique em reinciar o Chatbot.",
           field: "remarcarInfo",
           condition: (data) => data.acao === "Remarcar Agendamento",
           action: () => {
@@ -782,15 +782,7 @@
         const msgDiv = document.createElement("div");
         msgDiv.className = `chatbot-message ${type}`;
 
-        // Adicionar botão "Reiniciar Chatbot" em mensagens específicas
-        if (message.includes("Agendamento cancelado com sucesso!") || message.includes("Para remarcar seu agendamento")) {
-          msgDiv.innerHTML = `
-            ${message}
-            <div class="text-center mt-3">
-              <button class="btn btn-secondary" onclick="resetChatbot()">Reiniciar Chatbot</button>
-            </div>
-          `;
-        } else if (type === "bot" && steps[currentStep]?.isDate) {
+        if (type === "bot" && steps[currentStep]?.isDate) {
           msgDiv.innerHTML = `${message}<br><br>
             <input type="text" id="datePicker" class="form-control" placeholder="Selecione uma data" readonly>`;
           chatbotMessages.appendChild(msgDiv);
@@ -896,7 +888,6 @@
 
         const step = steps[currentStep];
 
-        // Armazenar a resposta do usuário
         if (step.options && step.options[userInput]) {
           bookingData[step.field] = step.options[userInput];
         } else {
@@ -909,10 +900,6 @@
           return;
         }
 
-        // Avançar o passo imediatamente após capturar a resposta
-        currentStep++;
-
-        // Lógica para "Cancelar Agendamento"
         if (bookingData.acao === "Cancelar Agendamento" && step.field === "telefone") {
           try {
             const agendamento = await getAgendamentoPorTelefone(userInput);
@@ -921,7 +908,9 @@
               const success = await deleteAgendamentoPorTelefone(userInput);
               if (success) {
                 addMessage("Agendamento cancelado com sucesso!");
-                // Não resetar automaticamente, o botão "Reiniciar Chatbot" já está na mensagem
+                setTimeout(() => {
+                  resetChatbot();
+                }, 3000);
               } else {
                 addMessage("Erro ao cancelar. Verifique sua conexão e tente novamente.");
                 resetChatbot();
@@ -936,14 +925,19 @@
             addMessage("Erro de conexão ao cancelar agendamento. Tente novamente.");
             resetChatbot();
           }
-        } 
-        // Lógica para "Novo Agendamento"
-        else if (bookingData.acao === "Novo Agendamento" && step.field === "observacoes") {
+        } else {
+          currentStep++;
+        }
+
+        if (currentStep >= steps.length || (bookingData.acao === "Novo Agendamento" && step.field === "observacoes")) {
           await saveAgendamento();
-        } 
-        // Mostrar a próxima mensagem se houver um próximo passo válido
-        else if (currentStep < steps.length && steps[currentStep]?.condition(bookingData)) {
+        } else if (steps[currentStep]?.condition(bookingData)) {
           setTimeout(() => addMessage(steps[currentStep].message), 500);
+        } else {
+          currentStep++;
+          if (currentStep < steps.length && steps[currentStep]?.condition(bookingData)) {
+            addMessage(steps[currentStep].message);
+          }
         }
       }
 
