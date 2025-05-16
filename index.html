@@ -179,7 +179,7 @@
         background-color: rgba(26, 26, 26, 0.95);
         padding: 40px;
         border-radius: 15px;
-        border: 1px solid var(--secondary);
+        border: 1MERDApx solid var(--secondary);
         max-width: 700px;
         margin: 0 auto;
       }
@@ -240,7 +240,7 @@
       .horario-btn:hover {
         background: rgba(212, 175, 55, 0.3);
       }
-      .hor testimonio-btn.reservado {
+      .horario-btn.reservado {
         background: rgba(255, 0, 0, 0.2);
         border-color: #ff0000;
         cursor: not-allowed;
@@ -477,7 +477,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="price-card">
+            <div class hotline="price-card">
               <h3>Barba Completa</h3>
               <div class="price">R$ 35</div>
               <ul class="list-unstyled">
@@ -664,7 +664,7 @@
           options: { 1: "Novo Agendamento", 2: "Cancelar Agendamento", 3: "Remarcar Agendamento" },
         },
         {
-          message: "Para remarcar seu agendamento, você precisará cancelar seu corte e agendar um novamente, clique em reinciar o Chatbot.",
+          message: "Para remarcar seu agendamento, você precisará cancelar seu corte e agendar um novamente, clique em reiniciar o Chatbot.",
           field: "remarcarInfo",
           condition: (data) => data.acao === "Remarcar Agendamento",
           action: () => {
@@ -833,7 +833,7 @@
 
           horariosDisponiveis.forEach((horario) => {
             const btn = document.createElement("button");
-            btn.className = "horario-btn";
+            btn className = "horario-btn";
             btn.textContent = horario;
 
             const estaReservado = reservados.some((ag) => ag.horario === horario);
@@ -888,6 +888,7 @@
 
         const step = steps[currentStep];
 
+        // Validar e armazenar a entrada do usuário
         if (step.options && step.options[userInput]) {
           bookingData[step.field] = step.options[userInput];
         } else {
@@ -900,6 +901,7 @@
           return;
         }
 
+        // Lógica para cancelamento
         if (bookingData.acao === "Cancelar Agendamento" && step.field === "telefone") {
           try {
             const agendamento = await getAgendamentoPorTelefone(userInput);
@@ -907,12 +909,33 @@
               addMessage(`Agendamento encontrado: ${agendamento.nome} (${agendamento.telefone}). Cancelando...`);
               const success = await deleteAgendamentoPorTelefone(userInput);
               if (success) {
-                addMessage("Agendamento cancelado com sucesso!");
+                // Exibir alerta de cancelamento com SweetAlert2
+                Swal.fire({
+                  title: "Agendamento Cancelado!",
+                  html: `
+                    <p>O agendamento para o número <strong>${userInput}</strong> foi cancelado com sucesso.</p>
+                    <p>Se precisar de um novo agendamento, reinicie o chatbot.</p>
+                  `,
+                  icon: "success",
+                  confirmButtonText: "Ok",
+                  confirmButtonColor: "#d4af37",
+                  background: "#1a1a1a",
+                  color: "#f8f9fa",
+                });
                 setTimeout(() => {
                   resetChatbot();
                 }, 3000);
               } else {
                 addMessage("Erro ao cancelar. Verifique sua conexão e tente novamente.");
+                Swal.fire({
+                  title: "Erro ao Cancelar",
+                  text: "Não foi possível cancelar o agendamento. Tente novamente.",
+                  icon: "error",
+                  confirmButtonText: "Ok",
+                  confirmButtonColor: "#d4af37",
+                  background: "#1a1a1a",
+                  color: "#f8f9fa",
+                });
                 resetChatbot();
               }
             } else {
@@ -923,21 +946,44 @@
           } catch (error) {
             console.error("Erro ao processar cancelamento:", error);
             addMessage("Erro de conexão ao cancelar agendamento. Tente novamente.");
+            Swal.fire({
+              title: "Erro de Conexão",
+              text: "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.",
+              icon: "error",
+              confirmButtonText: "Ok",
+              confirmButtonColor: "#d4af37",
+              background: "#1a1a1a",
+              color: "#f8f9fa",
+            });
             resetChatbot();
           }
         } else {
+          // Avançar para o próximo passo apenas se a condição do próximo passo for válida
           currentStep++;
+          while (
+            currentStep < steps.length &&
+            steps[currentStep] &&
+            !steps[currentStep].condition(bookingData)
+          ) {
+            currentStep++;
+          }
         }
 
-        if (currentStep >= steps.length || (bookingData.acao === "Novo Agendamento" && step.field === "observacoes")) {
-          await saveAgendamento();
-        } else if (steps[currentStep]?.condition(bookingData)) {
+        // Exibir a próxima mensagem, se houver
+        if (
+          currentStep < steps.length &&
+          steps[currentStep] &&
+          steps[currentStep].condition(bookingData)
+        ) {
           setTimeout(() => addMessage(steps[currentStep].message), 500);
-        } else {
-          currentStep++;
-          if (currentStep < steps.length && steps[currentStep]?.condition(bookingData)) {
-            addMessage(steps[currentStep].message);
-          }
+        }
+
+        // Salvar agendamento se for o último passo do "Novo Agendamento"
+        if (
+          bookingData.acao === "Novo Agendamento" &&
+          step.field === "observacoes"
+        ) {
+          await saveAgendamento();
         }
       }
 
