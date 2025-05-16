@@ -20,434 +20,355 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
-    />
     <style>
-:root {
-  --primary: #0a0a0a; /* Preto profundo */
-  --secondary: #d4a017; /* Dourado vintage */
-  --light: #e5e5e5; /* Cinza claro para texto */
-  --dark: #1c2526; /* Cinza escuro para fundos */
-  --accent: #2d3748; /* Cinza médio para detalhes */
-  --success: #2f855a; /* Verde escuro para confirmação */
-  --warning: #d97706; /* Âmbar para remarcação */
-  --danger: #c53030; /* Vermelho escuro para deletar */
-}
+      :root {
+        --primary: #0a0a0a; /* Preto profundo */
+        --secondary: #d4a017; /* Dourado vintage */
+        --light: #e5e5e5; /* Cinza claro para texto */
+        --dark: #1c2526; /* Cinza escuro para fundos */
+        --accent: #2d3748; /* Cinza médio para detalhes */
+        --success: #2f855a; /* Verde escuro para confirmação */
+        --danger: #c53030; /* Vermelho escuro para deletar */
+      }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-body {
-  font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
-  color: var(--light);
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-  font-size: 16px;
-}
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+        color: var(--light);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+        font-size: 16px;
+      }
 
-/* Navbar */
-.navbar {
-  background-color: var(--primary) !important;
-  border-bottom: 2px solid var(--secondary);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  padding: clamp(12px, 2.5vw, 15px) 0;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
-}
+      /* Navbar */
+      .navbar {
+        background-color: var(--primary) !important;
+        border-bottom: 2px solid var(--secondary);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        padding: clamp(12px, 2.5vw, 15px) 0;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+      }
 
-.navbar-brand {
-  font-weight: 700;
-  color: var(--secondary) !important;
-  font-size: clamp(1.5rem, 4.5vw, 2rem);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+      .navbar-brand {
+        font-weight: 700;
+        color: var(--secondary) !important;
+        font-size: clamp(1.5rem, 4.5vw, 2rem);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-.navbar-brand i {
-  font-size: clamp(1.3rem, 4vw, 1.6rem);
-}
+      .navbar-brand i {
+        font-size: clamp(1.3rem, 4vw, 1.6rem);
+      }
 
-.nav-link {
-  color: var(--light) !important;
-  font-weight: 500;
-  padding: clamp(8px, 2vw, 10px) clamp(15px, 3.5vw, 20px);
-  border-radius: 6px;
-  transition: background-color 0.3s, color 0.3s, transform 0.2s;
-  font-size: clamp(0.9rem, 2.8vw, 1.1rem);
-}
+      .nav-link {
+        color: var(--light) !important;
+        font-weight: 500;
+        padding: clamp(8px, 2vw, 10px) clamp(15px, 3.5vw, 20px);
+        border-radius: 6px;
+        transition: background-color 0.3s, color 0.3s, transform 0.2s;
+        font-size: clamp(0.9rem, 2.8vw, 1.1rem);
+      }
 
-.nav-link:hover,
-.nav-link.active {
-  color: var(--secondary) !important;
-  background-color: rgba(212, 160, 23, 0.15);
-  transform: translateY(-1px);
-}
+      .nav-link:hover,
+      .nav-link.active {
+        color: var(--secondary) !important;
+        background-color: rgba(212, 160, 23, 0.15);
+        transform: translateY(-1px);
+      }
 
-/* Botão Principal */
-.btn-gold {
-  background-color: var(--secondary);
-  color: var(--primary);
-  font-weight: 600;
-  padding: clamp(10px, 2.5vw, 12px) clamp(20px, 4vw, 25px);
-  border-radius: 6px;
-  border: none;
-  text-transform: uppercase;
-  font-size: clamp(0.85rem, 2.3vw, 0.95rem);
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
-  letter-spacing: 1px;
-}
+      /* Botão Principal */
+      .btn-gold {
+        background-color: var(--secondary);
+        color: var(--primary);
+        font-weight: 600;
+        padding: clamp(10px, 2.5vw, 12px) clamp(20px, 4vw, 25px);
+        border-radius: 6px;
+        border: none;
+        text-transform: uppercase;
+        font-size: clamp(0.85rem, 2.3vw, 0.95rem);
+        transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+        letter-spacing: 1px;
+      }
 
-.btn-gold:hover {
-  background-color: #b8860b;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
+      .btn-gold:hover {
+        background-color: #b8860b;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
 
-/* Painel Admin */
-.admin-panel {
-  background-color: var(--dark);
-  padding: clamp(20px, 5vw, 30px);
-  border-radius: 10px;
-  border: 1px solid rgba(212, 160, 23, 0.3);
-  max-width: clamp(90%, 95vw, 1200px);
-  margin: clamp(20px, 5vw, 40px) auto;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-}
+      /* Painel Admin */
+      .admin-panel {
+        background-color: var(--dark);
+        padding: clamp(20px, 5vw, 30px);
+        border-radius: 10px;
+        border: 1px solid rgba(212, 160, 23, 0.3);
+        max-width: clamp(90%, 95vw, 1200px);
+        margin: clamp(20px, 5vw, 40px) auto;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      }
 
-.admin-panel h3 {
-  font-size: clamp(1.6rem, 4.5vw, 2rem);
-  margin-bottom: clamp(15px, 3vw, 20px);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--secondary);
-}
+      .admin-panel h3 {
+        font-size: clamp(1.6rem, 4.5vw, 2rem);
+        margin-bottom: clamp(15px, 3vw, 20px);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--secondary);
+      }
 
-/* Tabela */
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: clamp(0.85rem, 2.5vw, 0.95rem);
-}
+      /* Tabela */
+      .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+      }
 
-.admin-table th,
-.admin-table td {
-  padding: clamp(10px, 2.5vw, 12px);
-  text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-}
+      .admin-table th,
+      .admin-table td {
+        padding: clamp(10px, 2.5vw, 12px);
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
 
-.admin-table th {
-  background-color: rgba(212, 160, 23, 0.2);
-  color: var(--secondary);
-  font-weight: 600;
-  font-size: clamp(0.9rem, 2.8vw, 1rem);
-  text-transform: uppercase;
-}
+      .admin-table th {
+        background-color: rgba(212, 160, 23, 0.2);
+        color: var(--secondary);
+        font-weight: 600;
+        font-size: clamp(0.9rem, 2.8vw, 1rem);
+        text-transform: uppercase;
+      }
 
-.admin-table tr:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
+      .admin-table tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
 
-/* Botões de Ação */
-.action-btn {
-  padding: clamp(6px, 1.8vw, 8px) clamp(10px, 2.5vw, 12px);
-  border-radius: 6px;
-  font-size: clamp(0.75rem, 2.2vw, 0.85rem);
-  transition: background-color 0.3s, transform 0.2s;
-  margin-right: 5px;
-  margin-bottom: 5px;
-}
+      /* Botões de Ação */
+      .action-btn {
+        padding: clamp(6px, 1.8vw, 8px) clamp(10px, 2.5vw, 12px);
+        border-radius: 6px;
+        font-size: clamp(0.75rem, 2.2vw, 0.85rem);
+        transition: background-color 0.3s, transform 0.2s;
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
 
-.btn-confirm {
-  background-color: var(--success);
-  color: var(--light);
-  border: none;
-}
+      .btn-confirm {
+        background-color: var(--success);
+        color: var(--light);
+        border: none;
+      }
 
-.btn-confirm:hover {
-  background-color: #276749;
-  transform: translateY(-1px);
-}
+      .btn-confirm:hover {
+        background-color: #276749;
+        transform: translateY(-1px);
+      }
 
-.btn-remarcar {
-  background-color: var(--warning);
-  color: var(--primary);
-  border: none;
-}
+      .btn-delete {
+        background-color: var(--danger);
+        color: var(--light);
+        border: none;
+      }
 
-.btn-remarcar:hover {
-  background-color: #b8860b;
-  transform: translateY(-1px);
-}
+      .btn-delete:hover {
+        background-color: #9b2c2c;
+        transform: translateY(-1px);
+      }
 
-.btn-delete {
-  background-color: var(--danger);
-  color: var(--light);
-  border: none;
-}
+      /* Filtros */
+      .d-flex {
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
 
-.btn-delete:hover {
-  background-color: #9b2c2c;
-  transform: translateY(-1px);
-}
+      .form-control {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--light);
+        border-radius: 6px;
+        padding: clamp(8px, 2vw, 10px);
+        font-size: clamp(0.85rem, 2.3vw, 0.95rem);
+      }
 
-/* Container de Horários */
-.horarios-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 10px;
-  margin-top: 20px;
-}
+      /* Responsividade */
+      @media (max-width: 1200px) {
+        .admin-panel {
+          max-width: 95%;
+        }
 
-.horario-btn {
-  padding: clamp(8px, 2vw, 10px);
-  border: 1px solid var(--secondary);
-  background: rgba(212, 160, 23, 0.15);
-  color: var(--light);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  font-size: clamp(0.8rem, 2.3vw, 0.9rem);
-  text-align: center;
-}
+        .admin-table th,
+        .admin-table td {
+          padding: 8px;
+        }
+      }
 
-.horario-btn:hover {
-  background: rgba(212, 160, 23, 0.3);
-  transform: translateY(-1px);
-}
+      @media (max-width: 992px) {
+        .navbar-nav {
+          text-align: center;
+          padding: 10px 0;
+        }
 
-.horario-btn.reservado {
-  background: rgba(197, 48, 48, 0.2);
-  border-color: var(--danger);
-  cursor: not-allowed;
-  opacity: 0.7;
-}
+        .nav-link {
+          margin: 5px 0;
+          padding: 8px 12px;
+        }
 
-/* Modal */
-#remarcarModal .modal-content {
-  background-color: var(--dark);
-  border: 1px solid var(--secondary);
-  border-radius: 10px;
-}
+        .btn-gold {
+          padding: 8px 15px;
+        }
 
-#remarcarModal .form-control {
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--light);
-  border-radius: 6px;
-  font-size: clamp(0.85rem, 2.3vw, 0.95rem);
-}
+        .admin-table {
+          font-size: 0.9rem;
+        }
+      }
 
-#remarcarModal .form-control:focus {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.2);
-}
+      @media (max-width: 768px) {
+        .navbar-brand {
+          font-size: 1.5rem;
+        }
 
-#remarcarModal .modal-header,
-#remarcarModal .modal-footer {
-  border-color: rgba(212, 160, 23, 0.2);
-}
+        .admin-panel {
+          padding: 15px;
+          margin: 15px;
+        }
 
-/* Filtros */
-.d-flex {
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: center;
-}
+        .admin-table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
 
-.form-control {
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--light);
-  border-radius: 6px;
-  padding: clamp(8px, 2vw, 10px);
-  font-size: clamp(0.85rem, 2.3vw, 0.95rem);
-}
+        .admin-table th,
+        .admin-table td {
+          font-size: 0.85rem;
+          padding: 6px;
+        }
 
-/* Responsividade */
-@media (max-width: 1200px) {
-  .admin-panel {
-    max-width: 95%;
-  }
+        .action-btn {
+          padding: 5px 8px;
+          font-size: 0.8rem;
+          display: inline-block;
+          margin-bottom: 5px;
+        }
 
-  .admin-table th,
-  .admin-table td {
-    padding: 8px;
-  }
-}
+        .d-flex {
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+        }
 
-@media (max-width: 992px) {
-  .navbar-nav {
-    text-align: center;
-    padding: 10px 0;
-  }
+        .form-control,
+        .btn-gold,
+        .btn-secondary {
+          width: auto;
+          font-size: 0.9rem;
+        }
+      }
 
-  .nav-link {
-    margin: 5px 0;
-    padding: 8px 12px;
-  }
+      @media (max-width: 576px) {
+        .navbar-brand {
+          font-size: 1.3rem;
+        }
 
-  .btn-gold {
-    padding: 8px 15px;
-  }
+        .nav-link {
+          font-size: 0.85rem;
+          padding: 6px 10px;
+        }
 
-  .admin-table {
-    font-size: 0.9rem;
-  }
-}
+        .admin-panel h3 {
+          font-size: 1.4rem;
+        }
 
-@media (max-width: 768px) {
-  .navbar-brand {
-    font-size: 1.5rem;
-  }
+        .admin-table {
+          display: block;
+        }
 
-  .admin-panel {
-    padding: 15px;
-    margin: 15px;
-  }
+        .admin-table thead {
+          display: none;
+        }
 
-  .admin-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+        .admin-table tr {
+          display: flex;
+          flex-wrap: wrap;
+          margin-bottom: 15px;
+          padding: 10px;
+          background-color: rgba(255, 255, 255, 0.05);
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-  .admin-table th,
-  .admin-table td {
-    font-size: 0.85rem;
-    padding: 6px;
-  }
+        .admin-table td {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 10px;
+          font-size: 0.85rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          flex: 1 1 100%;
+        }
 
-  .action-btn {
-    padding: 5px 8px;
-    font-size: 0.8rem;
-    display: inline-block;
-    margin-bottom: 5px;
-  }
+        .admin-table td::before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: var(--secondary);
+          text-transform: uppercase;
+          font-size: 0.8rem;
+          flex: 0 0 40%;
+        }
 
-  .d-flex {
-    flex-direction: column;
-    align-items: stretch;
-  }
+        .admin-table td:last-child {
+          border-bottom: none;
+        }
 
-  .form-control,
-  .btn-gold,
-  .btn-secondary {
-    width: 100%;
-    font-size: 0.9rem;
-  }
+        .action-btn {
+          width: 48%;
+          text-align: center;
+          margin-bottom: 8px;
+        }
 
-  .horarios-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+        .d-flex {
+          flex-direction: column;
+          align-items: stretch;
+        }
 
-@media (max-width: 576px) {
-  .navbar-brand {
-    font-size: 1.3rem;
-  }
+        .form-control,
+        .btn-gold,
+        .btn-secondary {
+          width: 100%;
+          font-size: 0.85rem;
+        }
+      }
 
-  .nav-link {
-    font-size: 0.85rem;
-    padding: 6px 10px;
-  }
+      @media (max-width: 400px) {
+        .admin-panel {
+          padding: 10px;
+          margin: 10px;
+        }
 
-  .admin-panel h3 {
-    font-size: 1.4rem;
-  }
+        .admin-table td {
+          font-size: 0.8rem;
+        }
 
-  .admin-table {
-    display: block;
-  }
+        .form-control {
+          font-size: 0.8rem;
+        }
 
-  .admin-table thead {
-    display: none;
-  }
-
-  .admin-table tr {
-    display: block;
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  .admin-table td {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 10px;
-    font-size: 0.85rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .admin-table td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: var(--secondary);
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    flex: 0 0 40%;
-  }
-
-  .admin-table td:last-child {
-    border-bottom: none;
-  }
-
-  .action-btn {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 8px;
-  }
-
-  .horarios-container {
-    grid-template-columns: 1fr;
-  }
-
-  #remarcarModal .modal-dialog {
-    margin: 10px;
-    max-width: 95%;
-  }
-
-  .btn-gold,
-  .btn-secondary {
-    padding: 8px;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .admin-panel {
-    padding: 10px;
-    margin: 10px;
-  }
-
-  .admin-table td {
-    font-size: 0.8rem;
-  }
-
-  .horario-btn {
-    padding: 8px;
-    font-size: 0.8rem;
-  }
-
-  .form-control {
-    font-size: 0.8rem;
-  }
-}
+        .action-btn {
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -505,88 +426,26 @@ body {
       </table>
     </div>
 
-    <!-- Modal de Remarcação -->
-    <div class="modal fade" id="remarcarModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content bg-dark">
-          <div class="modal-header border-secondary">
-            <h5 class="modal-title">Remarcar Agendamento</h5>
-            <button
-              type="button"
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="remarcarData" class="form-label">Nova Data</label>
-              <input
-                type="text"
-                class="form-control"
-                id="remarcarData"
-                placeholder="Selecione a data"
-                readonly
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Novo Horário</label>
-              <div class="horarios-container" id="remarcarHorariosContainer"></div>
-            </div>
-          </div>
-          <div class="modal-footer border-secondary">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-gold"
-              id="confirmarRemarcacao"
-            >
-              Confirmar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Scripts -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
     ></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
     <script>
       // Base URL para a API
       const API_URL = window.location.origin;
 
       // Elementos do DOM
-      let agendamentosTable, filterDate, remarcarModal, remarcarData, remarcarHorariosContainer, confirmarRemarcacao;
+      let agendamentosTable, filterDate;
 
       // Estado
-      let reschedulingId = null;
       const token = localStorage.getItem("token");
-
-      // Horários disponíveis
-      const horariosDisponiveis = [
-        "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-        "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
-      ];
 
       // Inicialização
       document.addEventListener("DOMContentLoaded", () => {
         agendamentosTable = document.getElementById("agendamentosTable");
         filterDate = document.getElementById("filterDate");
-        remarcarModal = new bootstrap.Modal(document.getElementById("remarcarModal"));
-        remarcarData = document.getElementById("remarcarData");
-        remarcarHorariosContainer = document.getElementById("remarcarHorariosContainer");
-        confirmarRemarcacao = document.getElementById("confirmarRemarcacao");
 
         const today = new Date().toISOString().split("T")[0];
         filterDate.value = today;
@@ -646,22 +505,19 @@ body {
         agendamentos.forEach((ag) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td>${ag.id || "-"}</td>
-            <td>${ag.nome || "-"}</td>
-            <td>${ag.telefone || "-"}</td>
-            <td>${ag.servico || "-"}</td>
-            <td>${ag.barbeiro || "-"}</td>
-            <td>${ag.data ? new Date(ag.data).toLocaleDateString("pt-BR") : "-"}</td>
-            <td>${ag.horario || "-"}</td>
-            <td>${ag.observacoes || "-"}</td>
-            <td>${ag.status || "Pendente"}</td>
-            <td>
+            <td data-label="ID">${ag.id || "-"}</td>
+            <td data-label="Nome">${ag.nome || "-"}</td>
+            <td data-label="Telefone">${ag.telefone || "-"}</td>
+            <td data-label="Serviço">${ag.servico || "-"}</td>
+            <td data-label="Barbeiro">${ag.barbeiro || "-"}</td>
+            <td data-label="Data">${ag.data ? new Date(ag.data).toLocaleDateString("pt-BR") : "-"}</td>
+            <td data-label="Horário">${ag.horario || "-"}</td>
+            <td data-label="Observações">${ag.observacoes || "-"}</td>
+            <td data-label="Status">${ag.status || "Pendente"}</td>
+            <td data-label="Ações">
               <button class="action-btn btn-confirm" onclick="confirmarAgendamento(${ag.id})" ${
                 ag.status === "Confirmado" ? "disabled" : ""
               }>Confirmar</button>
-              <button class="action-btn btn-remarcar" onclick="abrirRemarcarModal(${ag.id}, '${
-                ag.data
-              }')">Remarcar</button>
               <button class="action-btn btn-delete" onclick="deletarAgendamento(${ag.id})">Deletar</button>
             </td>
           `;
@@ -690,88 +546,6 @@ body {
         }
       }
 
-      // Abrir modal de remarcação
-      function abrirRemarcarModal(id, data) {
-        reschedulingId = id;
-        remarcarData.value = new Date(data).toLocaleDateString("pt-BR");
-        showTimeSelection(remarcarData.value);
-      }
-
-      // Mostrar seleção de horários
-      async function showTimeSelection(date) {
-        try {
-          remarcarHorariosContainer.innerHTML = "";
-
-          let reservados = await getAgendamentosPorData(formatDateForAPI(date));
-
-          horariosDisponiveis.forEach((horario) => {
-            const btn = document.createElement("button");
-            btn.className = "horario-btn";
-            btn.textContent = horario;
-
-            const estaReservado = reservados.some((ag) => ag.horario === horario);
-            if (estaReservado) {
-              btn.classList.add("reservado");
-              btn.disabled = true;
-              btn.title = "Horário já reservado";
-            } else {
-              btn.addEventListener("click", () => {
-                const selectedHorario = horario;
-                remarcarModal.hide();
-                confirmarRemarcacao.onclick = () => {
-                  saveRemarcacao(reschedulingId, date, selectedHorario);
-                };
-              });
-            }
-
-            remarcarHorariosContainer.appendChild(btn);
-          });
-
-          flatpickr(remarcarData, {
-            locale: "pt",
-            minDate: "today",
-            dateFormat: "d/m/Y",
-            defaultDate: date,
-            onChange: function (selectedDates, dateStr) {
-              showTimeSelection(dateStr);
-            },
-          });
-
-          remarcarModal.show();
-        } catch (error) {
-          console.error("Erro em showTimeSelection:", error);
-          alert("Erro ao carregar horários. Verifique sua conexão e tente novamente.");
-        }
-      }
-
-      // Formatar data para a API (DD/MM/YYYY → YYYY-MM-DD)
-      function formatDateForAPI(dateStr) {
-        const [day, month, year] = dateStr.split("/");
-        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-      }
-
-      // Salvar remarcação
-      async function saveRemarcacao(id, data, horario) {
-        try {
-          const response = await fetch(`${API_URL}/api/agendamentos/${id}/remarcar`, {
-            method: "PATCH",
-            headers: { Authorization: token, "Content-Type": "application/json" },
-            body: JSON.stringify({ data: formatDateForAPI(data), horario }),
-          });
-          const result = await response.json();
-
-          if (result.success) {
-            loadAgendamentos();
-            alert("Agendamento remarcado com sucesso!");
-          } else {
-            alert(result.message || "Erro ao remarcar. Tente novamente.");
-          }
-        } catch (error) {
-          console.error("Erro ao remarcar:", error);
-          alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
-        }
-      }
-
       // Deletar agendamento
       async function deletarAgendamento(id) {
         if (confirm("Tem certeza que deseja deletar este agendamento?")) {
@@ -792,21 +566,6 @@ body {
             console.error("Erro ao deletar:", error);
             alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
           }
-        }
-      }
-
-      // Obter agendamentos por data
-      async function getAgendamentosPorData(data) {
-        try {
-          const response = await fetch(`${API_URL}/api/agendamentos?data=${data}`, {
-            headers: { Authorization: token },
-          });
-          const result = await response.json();
-          return result.success ? result.data : [];
-        } catch (error) {
-          console.error("Erro ao obter agendamentos:", error);
-          alert("Erro de conexão com o servidor. Verifique sua conexão e tente novamente.");
-          return [];
         }
       }
 

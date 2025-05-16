@@ -24,6 +24,11 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
+    <!-- SweetAlert2 CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <style>
       :root {
@@ -235,7 +240,7 @@
       .horario-btn:hover {
         background: rgba(212, 175, 55, 0.3);
       }
-      .horario-btn.reservado {
+      .hor testimonio-btn.reservado {
         background: rgba(255, 0, 0, 0.2);
         border-color: #ff0000;
         cursor: not-allowed;
@@ -631,6 +636,8 @@
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
       // Base URL para a API (substitua pela URL do backend no Render, se diferente)
       const API_URL = window.location.origin; // Ex.: "https://sua-api.onrender.com"
@@ -652,9 +659,21 @@
       // Passos do chatbot
       const steps = [
         {
-          message: "Olá! Bem-vindo ao agendamento da Corte & Estilo. O que deseja fazer? (Digite o número)\n1. Novo Agendamento\n2. Cancelar Agendamento",
+          message: "Olá! Bem-vindo ao agendamento da Corte & Estilo. O que deseja fazer? (Digite o número)\n1. Novo Agendamento\n2. Cancelar Agendamento\n3. Remarcar Agendamento",
           field: "acao",
-          options: { 1: "Novo Agendamento", 2: "Cancelar Agendamento" },
+          options: { 1: "Novo Agendamento", 2: "Cancelar Agendamento", 3: "Remarcar Agendamento" },
+        },
+        {
+          message: "Para remarcar seu agendamento, você precisará cancelar seu corte e agendar um novamente, clique em reinciar o Chatbot.",
+          field: "remarcarInfo",
+          condition: (data) => data.acao === "Remarcar Agendamento",
+          action: () => {
+            setTimeout(() => {
+              currentStep = 1; // Volta para o passo de cancelamento
+              bookingData.acao = "Cancelar Agendamento"; // Define a ação como cancelamento
+              addMessage(steps[currentStep].message);
+            }, 2000);
+          },
         },
         {
           message: "Digite o número de WhatsApp do agendamento que deseja cancelar (Ex: 11999999999):",
@@ -875,6 +894,12 @@
           bookingData[step.field] = userInput;
         }
 
+        // Executa ação personalizada do passo, se houver (usado para "Remarcar")
+        if (step.action) {
+          step.action();
+          return;
+        }
+
         if (bookingData.acao === "Cancelar Agendamento" && step.field === "telefone") {
           try {
             const agendamento = await getAgendamentoPorTelefone(userInput);
@@ -938,14 +963,52 @@
 
           if (result.success) {
             addMessage("Agendamento realizado com sucesso! Entraremos em contato para confirmar.");
+            // Mostrar alerta bonito com SweetAlert2
+            Swal.fire({
+              title: "Agendamento Confirmado!",
+              html: `
+                <p>Olá, <strong>${bookingData.nome}</strong>!</p>
+                <p>Seu agendamento foi realizado com sucesso:</p>
+                <ul style="text-align: left; margin: 0 auto; max-width: 300px;">
+                  <li><strong>Serviço:</strong> ${bookingData.servico}</li>
+                  <li><strong>Barbeiro:</strong> ${bookingData.barbeiro}</li>
+                  <li><strong>Data:</strong> ${bookingData.data}</li>
+                  <li><strong>Horário:</strong> ${bookingData.horario}</li>
+                </ul>
+                <p>Entraremos em contato via WhatsApp (${bookingData.telefone}) para confirmar.</p>
+              `,
+              icon: "success",
+              confirmButtonText: "Ok",
+              confirmButtonColor: "#d4af37",
+              background: "#1a1a1a",
+              color: "#f8f9fa",
+            });
           } else {
             addMessage(`Erro ao agendar: ${result.message || "Tente novamente."}`);
+            Swal.fire({
+              title: "Erro ao Agendar",
+              text: result.message || "Ocorreu um erro ao realizar seu agendamento. Tente novamente.",
+              icon: "error",
+              confirmButtonText: "Ok",
+              confirmButtonColor: "#d4af37",
+              background: "#1a1a1a",
+              color: "#f8f9fa",
+            });
           }
 
           resetChatbot();
         } catch (error) {
           console.error("Erro ao salvar agendamento:", error);
           addMessage("Erro de conexão com o servidor. Tente novamente mais tarde.");
+          Swal.fire({
+            title: "Erro de Conexão",
+            text: "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.",
+            icon: "error",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#d4af37",
+            background: "#1a1a1a",
+            color: "#f8f9fa",
+          });
         }
       }
 
